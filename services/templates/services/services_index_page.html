@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags i18n %}
+
+{% block title %}Services — Innov Geomatics Consulting{% endblock %}
+{% block meta_description %}{{ page.seo_description }}{% endblock %}
+
+{% block content %}
+
+{# ══════════════════════════════════════════════════════ HERO ══════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-[#1B4FA0] px-[5%] pt-[120px] pb-16 overflow-hidden">
+
+  <div class="absolute inset-0 opacity-[0.05]"
+       style="background-image: repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px),repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px);"
+       aria-hidden="true"></div>
+  <div class="absolute -right-16 -bottom-16 w-72 h-72 rounded-full bg-sky/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+  {# Breadcrumb #}
+  <nav class="flex items-center gap-2 mb-6 relative z-10" aria-label="Fil d'Ariane">
+    <a href="/" class="text-sky text-xs hover:underline">{% trans "Accueil" %}</a>
+    <span class="text-white/30 text-xs">›</span>
+    <span class="text-white/60 text-xs">{% trans "Services" %}</span>
+  </nav>
+
+  <div class="relative z-10 max-w-2xl">
+    <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Nos prestations" %}</p>
+    <h1 class="font-display text-[clamp(28px,4vw,48px)] font-extrabold text-white leading-tight mb-4">
+      {% trans "Des solutions géospatiales sur-mesure" %}
+    </h1>
+    <p class="text-base text-white/65 leading-relaxed max-w-lg">
+      {{ page.intro }}
+    </p>
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════════════ TABS ══════ #}
+<div class="sticky top-0 z-30 bg-white border-b border-slate-200 px-[5%] flex gap-0 overflow-x-auto" id="services-tabs">
+  {% for svc in services %}
+  <a href="#{{ svc.id }}"
+     class="services-tab text-sm font-medium text-slate-500 hover:text-navy px-5 py-4 border-b-2 border-transparent hover:border-sky whitespace-nowrap transition-all no-underline">
+    {{ svc.title|truncatechars:22 }}
+  </a>
+  {% endfor %}
+</div>
+
+
+{# ══════════════════════════════════════════════════════ SERVICES ══ #}
+<section class="px-[5%] py-0">
+  <div class="divide-y divide-slate-100">
+
+    {% for svc in services %}
+    <div id="{{ svc.id }}" class="grid grid-cols-1 lg:grid-cols-2 gap-0 py-14 scroll-mt-[120px]">
+
+      {# Colonne gauche — description #}
+      <div class="lg:pr-12 lg:border-r border-slate-100">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-6 text-2xl {{ svc.bg_class }}">
+          {{ svc.emoji }}
+        </div>
+        <h2 class="font-display font-bold text-navy text-2xl mb-4">{{ svc.title }}</h2>
+        <p class="text-sm text-slate-500 leading-relaxed mb-6">{{ svc.description }}</p>
+
+        {# Tags stack technique #}
+        <div class="flex flex-wrap gap-2">
+          {% for tag in svc.tags %}
+          <span class="text-[11px] font-semibold bg-sky-light text-navy px-3 py-1 rounded-full">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      {# Colonne droite — livrables #}
+      <div class="lg:pl-12 mt-8 lg:mt-0">
+        <p class="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-4">{% trans "Ce que nous livrons" %}</p>
+        <ul class="space-y-0 divide-y divide-slate-100">
+          {% for livrable in svc.livrables %}
+          <li class="flex items-center gap-3 py-3 text-sm text-slate-700">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky flex-shrink-0"></span>
+            {{ livrable }}
+          </li>
+          {% endfor %}
+        </ul>
+
+        <a href="/contact/?service={{ svc.id }}"
+           class="inline-flex items-center gap-2 mt-8 bg-navy hover:bg-navy-dark text-white text-sm font-medium px-6 py-3 rounded-lg transition-colors no-underline">
+          {% trans "Demander un devis" %} →
+        </a>
+      </div>
+
+    </div>
+    {% endfor %}
+
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════════════ PROCESSUS ═ #}
+<section class="bg-slate-50 px-[5%] py-20">
+  <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Notre méthode" %}</p>
+  <h2 class="font-display text-[clamp(22px,3vw,36px)] font-bold text-navy mb-14">
+    {% trans "Comment nous travaillons" %}
+  </h2>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-8 relative">
+    {# Ligne de connexion (desktop) #}
+    <div class="absolute hidden md:block top-5 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-sky to-navy" aria-hidden="true"></div>
+
+    {% for step in process_steps %}
+    <div class="flex flex-col items-center text-center">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center font-display text-sm font-bold text-white mb-4 relative z-10
+                  {% if step.accent %}bg-sky{% else %}bg-navy{% endif %}">
+        {{ step.num }}
+      </div>
+      <h3 class="font-display font-bold text-navy text-base mb-2">{{ step.title }}</h3>
+      <p class="text-xs text-slate-500 leading-relaxed">{{ step.description }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════════════ CTA ═══════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-navy text-center px-[5%] py-20 overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(41,171,226,0.12),transparent_70%)]" aria-hidden="true"></div>
+  <div class="relative z-10">
+    <h2 class="font-display text-[clamp(22px,3vw,38px)] font-bold text-white mb-4">{% trans "Un projet en tête ?" %}</h2>
+    <p class="text-base text-white/60 leading-relaxed max-w-md mx-auto mb-8">
+      {% trans "Décrivez-nous votre besoin et nous vous proposons une approche adaptée à votre contexte." %}
+    </p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="/contact/" class="inline-flex items-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium px-8 py-3.5 rounded-lg transition-colors no-underline">
+        ✉ {% trans "Nous contacter" %}
+      </a>
+      <a href="/projets/" class="inline-flex items-center gap-2 border border-white/30 hover:border-white/60 hover:bg-white/5 text-white font-medium px-8 py-3.5 rounded-lg transition-all no-underline">
+        {% trans "Voir nos projets" %} →
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
+{% block extra_scripts %}
+<script>
+{# Tab actif au scroll #}
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = document.querySelectorAll('.services-tab');
+  const sections = document.querySelectorAll('[id]');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tabs.forEach(t => t.classList.remove('text-navy', 'border-sky'));
+        const active = document.querySelector(`.services-tab[href="#${entry.target.id}"]`);
+        if (active) {
+          active.classList.add('text-navy', 'border-sky');
+        }
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => {
+    if (['gis','teledetection','webmapping','conseil'].includes(s.id)) {
+      observer.observe(s);
+    }
+  });
+});
+</script>
+{% endblock %}

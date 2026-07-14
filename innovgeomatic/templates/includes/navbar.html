@@ -1,0 +1,54 @@
+¨{% load static %}
+{% load wagtailcore_tags i18n %}
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[5%] h-[68px] bg-navy/95 backdrop-blur border-b border-sky/20 transition-all duration-300">
+
+  <!-- Logo -->
+  <a href="/" class="flex items-center gap-2.5 font-display font-extrabold text-lg text-white no-underline group">
+    <div class="w-14 h-14 bg-sky rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-sky-dark transition-colors">
+      <!--<svg class="w-5 h-5 fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">  
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg> -->
+      <img src="{% static 'images/logo.png' %}" alt="Logo" >
+    </div>
+    <span>Innov <span class="text-sky">Geomatics</span></span>
+  </a>
+
+  <!-- Desktop links -->
+  <ul class="hidden md:flex items-center gap-8 list-none m-0 p-0">
+    <li><a href="/services/" class="text-white/80 hover:text-sky text-sm font-medium transition-colors no-underline">{% trans "Services" %}</a></li>
+    <li><a href="/formations/" class="text-white/80 hover:text-sky text-sm font-medium transition-colors no-underline">{% trans "Formations" %}</a></li>
+    <li><a href="/projets/" class="text-white/80 hover:text-sky text-sm font-medium transition-colors no-underline">{% trans "Projets" %}</a></li>
+    <li><a href="/blog/" class="text-white/80 hover:text-sky text-sm font-medium transition-colors no-underline">Blog</a></li>
+    <li>
+      <a href="/contact/" class="bg-sky hover:bg-sky-dark text-white text-sm font-medium px-5 py-2 rounded-md transition-colors no-underline">
+        {% trans "Contact" %}
+      </a>
+    </li>
+    <!-- Sélecteur de langue -->
+    <li class="flex items-center gap-1 text-white/50 text-sm">
+      <li class="text-white/50 text-sm">FR</li>
+    </li>
+  </ul>
+
+  <!-- Burger mobile -->
+  <button id="burger" class="md:hidden flex flex-col gap-1.5 p-2 cursor-pointer" aria-label="Menu" aria-expanded="false">
+    <span class="w-6 h-0.5 bg-white transition-all duration-300 block"></span>
+    <span class="w-6 h-0.5 bg-white transition-all duration-300 block"></span>
+    <span class="w-6 h-0.5 bg-white transition-all duration-300 block"></span>
+  </button>
+</nav>
+
+<!-- Mobile drawer -->
+<div id="mobile-menu" class="fixed inset-0 z-40 bg-navy-dark transform -translate-x-full transition-transform duration-300 md:hidden pt-[68px]">
+  <ul class="flex flex-col p-8 gap-6 list-none">
+    <li><a href="/services/" class="text-white text-xl font-display font-bold no-underline">{% trans "Services" %}</a></li>
+    <li><a href="/formations/" class="text-white text-xl font-display font-bold no-underline">{% trans "Formations" %}</a></li>
+    <li><a href="/projets/" class="text-white text-xl font-display font-bold no-underline">{% trans "Projets" %}</a></li>
+    <li><a href="/blog/" class="text-white text-xl font-display font-bold no-underline">Blog</a></li>
+    <li>
+      <a href="/contact/" class="inline-block bg-sky text-white text-lg font-medium px-8 py-3 rounded-lg no-underline mt-4">
+        {% trans "Nous contacter" %}
+      </a>
+    </li>
+  </ul>
+</div>

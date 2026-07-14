@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags i18n %}
+
+{% block title %}Projets — Innov Geomatics Consulting{% endblock %}
+{% block meta_description %}Portfolio des projets SIG, télédétection et cartographie web réalisés par Innov Geomatics Consulting en Afrique.{% endblock %}
+
+{% block content %}
+
+{# ══════════════════════════════════════════════ HERO ══════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-[#1B4FA0] px-[5%] pt-[120px] pb-14 overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.05]"
+       style="background-image:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px),repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px);"
+       aria-hidden="true"></div>
+  <div class="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-sky/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+  <nav class="flex items-center gap-2 mb-5 relative z-10" aria-label="Fil d'Ariane">
+    <a href="/" class="text-sky text-xs hover:underline">{% trans "Accueil" %}</a>
+    <span class="text-white/30 text-xs">›</span>
+    <span class="text-white/60 text-xs">{% trans "Projets" %}</span>
+  </nav>
+
+  <div class="relative z-10 max-w-xl">
+    <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Notre portfolio" %}</p>
+    <h1 class="font-display text-[clamp(26px,4vw,44px)] font-extrabold text-white leading-tight mb-3">
+      {% trans "Projets réalisés en Afrique" %}
+    </h1>
+    <p class="text-sm text-white/65 leading-relaxed">{{ page.intro }}</p>
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════ STATS ══════ #}
+<div class="grid grid-cols-2 md:grid-cols-4 border-b border-slate-200">
+  <div class="py-5 px-6 text-center border-r border-slate-200">
+    <p class="font-display text-2xl font-extrabold text-navy">{{ page.stat_projets }}<span class="text-sky">+</span></p>
+    <p class="text-xs text-slate-400 mt-1">{% trans "Projets livrés" %}</p>
+  </div>
+  <div class="py-5 px-6 text-center border-r border-slate-200">
+    <p class="font-display text-2xl font-extrabold text-navy">{{ page.stat_pays }}<span class="text-sky">+</span></p>
+    <p class="text-xs text-slate-400 mt-1">{% trans "Pays couverts" %}</p>
+  </div>
+  <div class="py-5 px-6 text-center border-r border-slate-200">
+    <p class="font-display text-2xl font-extrabold text-navy">{{ page.stat_clients }}<span class="text-sky">+</span></p>
+    <p class="text-xs text-slate-400 mt-1">{% trans "Clients satisfaits" %}</p>
+  </div>
+  <div class="py-5 px-6 text-center">
+    <p class="font-display text-2xl font-extrabold text-navy">{{ page.stat_experience }}<span class="text-sky">+</span></p>
+    <p class="text-xs text-slate-400 mt-1">{% trans "Années d'expérience" %}</p>
+  </div>
+</div>
+
+
+{# ══════════════════════════════════════════════ FILTRES ════ #}
+<div class="bg-slate-50 border-b border-slate-200 px-[5%] py-3 flex flex-wrap items-center gap-2">
+  <span class="text-[10px] font-bold tracking-widest uppercase text-slate-400 mr-2">{% trans "Filtrer" %} :</span>
+
+  <a href="/projets/"
+     class="text-xs font-medium px-4 py-1.5 rounded-full border transition-colors no-underline
+            {% if not categorie_active %}bg-navy text-white border-navy{% else %}bg-white text-slate-500 border-slate-200 hover:border-navy hover:text-navy{% endif %}">
+    {% trans "Tous" %}
+  </a>
+
+  {% for cat_val, cat_label in categories %}
+  <a href="?cat={{ cat_val }}"
+     class="text-xs font-medium px-4 py-1.5 rounded-full border transition-colors no-underline
+            {% if categorie_active == cat_val %}bg-navy text-white border-navy{% else %}bg-white text-slate-500 border-slate-200 hover:border-navy hover:text-navy{% endif %}">
+    {{ cat_label }}
+  </a>
+  {% endfor %}
+</div>
+
+
+{# ══════════════════════════════════════════════ CONTENU ════ #}
+<section class="px-[5%] py-14">
+
+  {# Projet phare #}
+  {% if projet_phare %}
+  <article class="grid grid-cols-1 lg:grid-cols-2 rounded-2xl overflow-hidden border border-slate-200 mb-10 hover:shadow-xl hover:shadow-navy/10 transition-all duration-300">
+
+    {# Image / Emoji #}
+    <div class="bg-gradient-to-br from-navy/10 to-sky/20 flex items-center justify-center min-h-[220px] relative">
+      {% if projet_phare.image %}
+        {% image projet_phare.image fill-700x440 as img %}
+        <img src="{{ img.url }}" alt="{{ projet_phare.titre }}" class="w-full h-full object-cover absolute inset-0">
+      {% else %}
+        <span class="text-6xl">{{ projet_phare.emoji_fallback }}</span>
+      {% endif %}
+      <span class="absolute top-4 left-4 inline-flex items-center gap-1.5 bg-sky/20 border border-sky/35 text-sky text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
+        ✦ {% trans "Projet phare" %}
+      </span>
+      {% if projet_phare.annee %}
+      <span class="absolute top-4 right-4 text-[10px] font-semibold px-3 py-1 rounded-full bg-white/90 text-slate-500">
+        {{ projet_phare.annee }}
+      </span>
+      {% endif %}
+    </div>
+
+    {# Corps #}
+    <div class="p-8 flex flex-col justify-center">
+      <p class="text-[10px] font-bold text-sky tracking-widest uppercase mb-2">{{ projet_phare.get_categorie_display }}</p>
+      <h2 class="font-display font-bold text-navy text-2xl leading-snug mb-3">{{ projet_phare.titre }}</h2>
+      <p class="text-sm text-slate-500 leading-relaxed mb-5">{{ projet_phare.description_courte }}</p>
+
+      {% if projet_phare.tags_list %}
+      <div class="flex flex-wrap gap-2 mb-5">
+        {% for tag in projet_phare.tags_list %}
+        <span class="text-[11px] font-semibold bg-sky-light text-navy px-3 py-1 rounded-full">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="flex flex-wrap gap-4 text-xs text-slate-400 mb-6">
+        {% if projet_phare.client %}<span>👥 {{ projet_phare.client }}</span>{% endif %}
+        {% if projet_phare.lieu %}<span>📍 {{ projet_phare.lieu }}</span>{% endif %}
+      </div>
+
+      <a href="{{ projet_phare.get_absolute_url }}"
+         class="inline-flex items-center gap-2 bg-navy hover:bg-navy-dark text-white font-medium text-sm px-6 py-3 rounded-lg transition-colors no-underline w-fit">
+        {% trans "Voir le projet" %} →
+      </a>
+    </div>
+  </article>
+  {% endif %}
+
+  {# Grille projets #}
+  {% if projets %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for projet in projets %}
+    <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-navy/10 transition-all duration-300 flex flex-col">
+
+      {# Image / Emoji #}
+      <div class="relative h-44 bg-gradient-to-br from-navy/8 to-sky/15 flex items-center justify-center overflow-hidden">
+        {% if projet.image %}
+          {% image projet.image fill-600x350 as img %}
+          <img src="{{ img.url }}" alt="{{ projet.titre }}" class="w-full h-full object-cover absolute inset-0">
+        {% else %}
+          <span class="text-4xl">{{ projet.emoji_fallback }}</span>
+        {% endif %}
+
+        <span class="absolute top-3 left-3 text-[9px] font-bold px-2.5 py-1 rounded-full tracking-widest uppercase
+                     bg-navy/15 text-navy">
+          {{ projet.get_categorie_display }}
+        </span>
+        {% if projet.annee %}
+        <span class="absolute top-3 right-3 text-[9px] font-semibold px-2.5 py-1 rounded-full bg-white/90 text-slate-500">
+          {{ projet.annee }}
+        </span>
+        {% endif %}
+      </div>
+
+      {# Corps #}
+      <div class="p-5 flex flex-col flex-1">
+        {% if projet.client %}
+        <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-2">{{ projet.client }}</p>
+        {% endif %}
+        <h3 class="font-display font-bold text-navy text-base leading-snug mb-2">{{ projet.titre }}</h3>
+        <p class="text-xs text-slate-500 leading-relaxed mb-4 flex-1">{{ projet.description_courte }}</p>
+
+        {% if projet.tags_list %}
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          {% for tag in projet.tags_list|slice:":4" %}
+          <span class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full">{{ tag }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if projet.lieu %}
+        <p class="text-[10px] text-slate-400 mb-3">📍 {{ projet.lieu }}</p>
+        {% endif %}
+
+        <a href="{{ projet.get_absolute_url }}"
+           class="inline-flex items-center gap-1 text-xs font-semibold text-sky no-underline hover:gap-2 transition-all mt-auto">
+          {% trans "Voir le projet" %} →
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="text-center py-20">
+    <p class="text-4xl mb-4">📂</p>
+    <h2 class="font-display font-bold text-navy text-xl mb-3">{% trans "Aucun projet trouvé" %}</h2>
+    <p class="text-slate-500 mb-6">{% trans "Essayez un autre filtre." %}</p>
+    <a href="/projets/" class="inline-flex items-center gap-2 bg-navy text-white text-sm font-medium px-6 py-3 rounded-lg no-underline">
+      {% trans "Voir tous les projets" %}
+    </a>
+  </div>
+  {% endif %}
+
+</section>
+
+
+{# ══════════════════════════════════════════════ CTA ═══════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-navy text-center px-[5%] py-20 overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(41,171,226,0.12),transparent_70%)]" aria-hidden="true"></div>
+  <div class="relative z-10">
+    <h2 class="font-display text-[clamp(22px,3vw,38px)] font-bold text-white mb-4">{% trans "Votre projet ici ?" %}</h2>
+    <p class="text-base text-white/60 leading-relaxed max-w-md mx-auto mb-8">
+      {% trans "Nous accompagnons institutions, ONG et entreprises dans leurs défis géospatiaux." %}
+    </p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="/contact/" class="inline-flex items-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium px-8 py-3.5 rounded-lg transition-colors no-underline">
+        ✉ {% trans "Nous contacter" %}
+      </a>
+      <a href="/services/" class="inline-flex items-center gap-2 border border-white/30 hover:border-white/60 hover:bg-white/5 text-white font-medium px-8 py-3.5 rounded-lg transition-all no-underline">
+        {% trans "Nos services" %} →
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

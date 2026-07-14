@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags i18n %}
+
+{% block title %}Formations en géomatique — Innov Geomatics Consulting{% endblock %}
+{% block meta_description %}Formations SIG, télédétection et cartographie web à Ouagadougou et en ligne. Programmes certifiants par Innov Geomatics.{% endblock %}
+
+{% block content %}
+
+{# ══════════════════════════════════════════════════════ HERO ══════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-[#1B4FA0] px-[5%] pt-[120px] pb-16 overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.05]"
+       style="background-image:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px),repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px);"
+       aria-hidden="true"></div>
+  <div class="absolute -right-16 -bottom-16 w-72 h-72 rounded-full bg-sky/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+  <nav class="flex items-center gap-2 mb-6 relative z-10" aria-label="Fil d'Ariane">
+    <a href="/" class="text-sky text-xs hover:underline">{% trans "Accueil" %}</a>
+    <span class="text-white/30 text-xs">›</span>
+    <span class="text-white/60 text-xs">{% trans "Formations" %}</span>
+  </nav>
+
+  <div class="relative z-10 max-w-2xl">
+    <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Renforcement de capacités" %}</p>
+    <h1 class="font-display text-[clamp(28px,4vw,48px)] font-extrabold text-white leading-tight mb-4">
+      {% trans "Formations en géomatique pour professionnels" %}
+    </h1>
+    <p class="text-base text-white/65 leading-relaxed max-w-lg mb-10">{{ page.intro }}</p>
+
+    <div class="flex flex-wrap gap-10 pt-8 border-t border-white/10">
+      <div>
+        <p class="font-display text-[28px] font-extrabold text-white leading-none">{{ page.stat_formes }}<span class="text-sky">+</span></p>
+        <p class="text-xs text-white/45 mt-1">{% trans "Professionnels formés" %}</p>
+      </div>
+      <div>
+        <p class="font-display text-[28px] font-extrabold text-white leading-none">{{ page.stat_programmes }}<span class="text-sky">+</span></p>
+        <p class="text-xs text-white/45 mt-1">{% trans "Programmes" %}</p>
+      </div>
+      <div>
+        <p class="font-display text-[28px] font-extrabold text-white leading-none">{{ page.stat_satisfaction }}<span class="text-sky">%</span></p>
+        <p class="text-xs text-white/45 mt-1">{% trans "Taux de satisfaction" %}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════════════ FILTRES ═══ #}
+<div class="bg-slate-50 border-b border-slate-200 px-[5%] py-4 flex flex-wrap items-center gap-2">
+  <span class="text-[11px] font-bold tracking-widest uppercase text-slate-400 mr-2">{% trans "Filtrer" %} :</span>
+
+  <a href="/"
+     class="text-xs font-medium px-4 py-1.5 rounded-full border transition-colors no-underline
+            {% if not categorie_active %}bg-navy text-white border-navy{% else %}bg-white text-slate-500 border-slate-200 hover:border-navy hover:text-navy{% endif %}">
+    {% trans "Toutes" %}
+  </a>
+
+  {% for cat_val, cat_label in categories %}
+  <a href="?cat={{ cat_val }}"
+     class="text-xs font-medium px-4 py-1.5 rounded-full border transition-colors no-underline
+            {% if categorie_active == cat_val %}bg-navy text-white border-navy{% else %}bg-white text-slate-500 border-slate-200 hover:border-navy hover:text-navy{% endif %}">
+    {{ cat_label }}
+  </a>
+  {% endfor %}
+
+  <span class="w-px h-5 bg-slate-200 mx-2"></span>
+
+  {% for mode_val, mode_label in modalites %}
+  <a href="?mode={{ mode_val }}{% if categorie_active %}&cat={{ categorie_active }}{% endif %}"
+     class="text-xs font-medium px-4 py-1.5 rounded-full border transition-colors no-underline
+            {% if modalite_active == mode_val %}bg-sky text-white border-sky{% else %}bg-white text-slate-500 border-slate-200 hover:border-sky hover:text-sky{% endif %}">
+    {{ mode_label }}
+  </a>
+  {% endfor %}
+</div>
+
+
+{# ══════════════════════════════════════════════════════ DISPONIBLES ══ #}
+{% if formations_dispo %}
+<section class="px-[5%] py-16">
+  <div class="flex items-center gap-3 mb-10">
+    <h2 class="font-display text-2xl font-bold text-navy">{% trans "Formations disponibles" %}</h2>
+    <span class="inline-flex items-center gap-1.5 bg-sky/15 border border-sky/30 text-sky text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
+      <span class="w-1.5 h-1.5 bg-sky rounded-full animate-pulse"></span>
+      {% trans "Inscription ouverte" %}
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    {% for formation in formations_dispo %}
+    <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-navy/10 transition-all duration-300 flex flex-col">
+
+      <div class="bg-gradient-to-br from-navy to-[#1B4FA0] p-7 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_80%_20%,#29ABE2,transparent)]"></div>
+        <div class="relative z-10">
+          <span class="inline-flex items-center gap-1.5 bg-sky/20 border border-sky/35 text-sky text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+            <span class="w-1.5 h-1.5 bg-sky rounded-full animate-pulse"></span>
+            {% trans "Disponible" %}
+          </span>
+          <h3 class="font-display font-bold text-white text-lg leading-snug mb-2">{{ formation.titre }}</h3>
+          <p class="text-sm text-white/55 leading-relaxed">{{ formation.description_courte }}</p>
+        </div>
+      </div>
+
+      <div class="p-6 flex flex-col flex-1">
+        <div class="flex flex-wrap gap-3 mb-5 text-xs text-slate-400">
+          {% if formation.duree %}<span>⏱ {{ formation.duree }}</span>{% endif %}
+          {% if formation.nb_participants %}<span>👥 {{ formation.nb_participants }}</span>{% endif %}
+          {% if formation.lieu %}<span>📍 {{ formation.lieu }}</span>{% endif %}
+        </div>
+
+        {% if formation.modules.all %}
+        <ul class="mb-5 divide-y divide-slate-100 flex-1">
+          {% for module in formation.modules.all|slice:":5" %}
+          <li class="flex items-center gap-3 text-sm text-slate-700 py-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky flex-shrink-0"></span>
+            {{ module.titre }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div class="mt-auto">
+          {% if formation.prix %}
+          <p class="font-display font-bold text-navy text-base mb-3">
+            {{ formation.prix_display }}
+            <span class="font-normal text-slate-400 text-xs">/ participant</span>
+          </p>
+          {% endif %}
+          <a href="/contact/?formation={{ formation.slug }}"
+             class="flex items-center justify-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium text-sm px-6 py-3 rounded-lg transition-colors no-underline w-full">
+            {% trans "S'inscrire" %} →
+          </a>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+
+{# ══════════════════════════════════════════════════════ À VENIR ════ #}
+{% if formations_coming %}
+<section class="bg-slate-50 px-[5%] py-16">
+  <div class="flex items-center gap-3 mb-10">
+    <h2 class="font-display text-2xl font-bold text-navy">{% trans "Formations à venir" %}</h2>
+    <span class="inline-flex items-center gap-1.5 bg-slate-200 text-slate-500 text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
+      {% trans "Prochainement" %}
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    {% for formation in formations_coming %}
+    <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 flex flex-col md:flex-row hover:shadow-lg transition-all duration-300">
+
+      <div class="bg-gradient-to-br from-navy to-[#2449B0] p-6 md:w-5/12 flex-shrink-0 flex flex-col justify-between">
+        <div>
+          <span class="inline-flex text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3 bg-white/10 border border-white/15 text-white/50">
+            {% trans "Prochainement" %}
+          </span>
+          <h3 class="font-display font-bold text-white text-base leading-snug mb-2">{{ formation.titre }}</h3>
+          <p class="text-xs text-white/50 leading-relaxed">{{ formation.description_courte }}</p>
+        </div>
+      </div>
+
+      <div class="p-6 flex flex-col flex-1">
+        <div class="flex flex-wrap gap-3 mb-4 text-xs text-slate-400">
+          {% if formation.duree %}<span>⏱ {{ formation.duree }}</span>{% endif %}
+          {% if formation.lieu %}<span>📍 {{ formation.lieu }}</span>{% endif %}
+        </div>
+
+        {% if formation.modules.all %}
+        <ul class="mb-5 divide-y divide-slate-100 flex-1">
+          {% for module in formation.modules.all|slice:":3" %}
+          <li class="flex items-center gap-3 text-sm text-slate-600 py-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-300 flex-shrink-0"></span>
+            {{ module.titre }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        <a href="/contact/?formation={{ formation.slug }}"
+           class="flex items-center justify-center gap-2 border border-slate-200 hover:border-sky hover:text-sky text-slate-400 font-medium text-sm px-6 py-2.5 rounded-lg transition-colors no-underline w-full mt-auto">
+          {% trans "Être notifié" %} →
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+
+{# ══════════════════════════════════════════════════════ EMPTY STATE ═ #}
+{% if not formations_dispo and not formations_coming %}
+<section class="px-[5%] py-24 text-center">
+  <p class="text-4xl mb-4">🗺️</p>
+  <h2 class="font-display font-bold text-navy text-2xl mb-3">{% trans "Aucune formation trouvée" %}</h2>
+  <p class="text-slate-500 mb-6">{% trans "Essayez un autre filtre ou revenez bientôt." %}</p>
+  <a href="/formations/" class="inline-flex items-center gap-2 bg-navy text-white font-medium text-sm px-6 py-3 rounded-lg no-underline">
+    {% trans "Voir toutes les formations" %}
+  </a>
+</section>
+{% endif %}
+
+
+{# ══════════════════════════════════════════════════════ BANNIÈRE LMS ═ #}
+{% if page.lms_url %}
+<div class="px-[5%] py-10">
+  <div class="bg-gradient-to-r from-navy to-sky rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div>
+      <h3 class="font-display font-bold text-white text-xl mb-2">{% trans "Accédez à nos formations en ligne — Innov LMS" %}</h3>
+      <p class="text-white/70 text-sm leading-relaxed max-w-md">
+        {% trans "Suivez vos formations à votre rythme, obtenez un certificat et échangez avec les formateurs sur la plateforme dédiée." %}
+      </p>
+    </div>
+    <a href="{{ page.lms_url }}" target="_blank" rel="noopener"
+       class="flex-shrink-0 bg-white text-navy font-bold text-sm px-8 py-3.5 rounded-xl no-underline hover:bg-slate-50 transition-colors whitespace-nowrap">
+      {% trans "Accéder à la plateforme" %} →
+    </a>
+  </div>
+</div>
+{% endif %}
+
+
+{# ══════════════════════════════════════════════════════ CTA ═════════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-navy text-center px-[5%] py-20 overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(41,171,226,0.12),transparent_70%)]" aria-hidden="true"></div>
+  <div class="relative z-10">
+    <h2 class="font-display text-[clamp(22px,3vw,38px)] font-bold text-white mb-4">
+      {% trans "Besoin d'une formation sur mesure ?" %}
+    </h2>
+    <p class="text-base text-white/60 leading-relaxed max-w-md mx-auto mb-8">
+      {% trans "Nous concevons des programmes adaptés à votre organisation, en intra ou en inter-entreprises." %}
+    </p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="/contact/?sujet=formation-sur-mesure"
+         class="inline-flex items-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium px-8 py-3.5 rounded-lg transition-colors no-underline">
+        ✉ {% trans "Nous contacter" %}
+      </a>
+      <a href="/services/"
+         class="inline-flex items-center gap-2 border border-white/30 hover:border-white/60 hover:bg-white/5 text-white font-medium px-8 py-3.5 rounded-lg transition-all no-underline">
+        {% trans "Voir nos services" %} →
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

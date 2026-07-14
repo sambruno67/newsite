@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags i18n %}
+{% load blog_tags %}
+
+{% block title %}Blog — Innov Geomatics Consulting{% endblock %}
+{% block meta_description %}Tutoriels SIG, télédétection et cartographie web par l'équipe Innov Geomatics Consulting.{% endblock %}
+
+{% block content %}
+
+{# ══════════════════════════════════════════════ HERO ══════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-[#1B4FA0] px-[5%] pt-[120px] pb-12 overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.05]"
+       style="background-image:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px),repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px);"
+       aria-hidden="true"></div>
+  <div class="absolute -right-16 -bottom-16 w-60 h-60 rounded-full bg-sky/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+  <nav class="flex items-center gap-2 mb-5 relative z-10" aria-label="Fil d'Ariane">
+    <a href="/" class="text-sky text-xs hover:underline">{% trans "Accueil" %}</a>
+    <span class="text-white/30 text-xs">›</span>
+    <span class="text-white/60 text-xs">Blog</span>
+  </nav>
+
+  <div class="relative z-10 max-w-xl">
+    <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Ressources & actualités" %}</p>
+    <h1 class="font-display text-[clamp(24px,4vw,42px)] font-extrabold text-white leading-tight mb-3">
+      {% trans "Le blog de la géomatique africaine" %}
+    </h1>
+    <p class="text-sm text-white/65 leading-relaxed">{{ page.intro }}</p>
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════ LAYOUT ════ #}
+<div class="grid grid-cols-1 lg:grid-cols-[1fr_300px]">
+
+  {# ── Colonne Articles ────────────────────────────────────── #}
+  <div class="px-[5%] lg:px-8 py-10 border-r border-slate-200">
+
+    {# Filtres catégories #}
+    <div class="flex flex-wrap gap-2 mb-8">
+      <a href="/blog/"
+         class="text-xs font-medium px-4 py-1.5 rounded-full border transition-colors no-underline
+                {% if not categorie_active %}bg-navy text-white border-navy{% else %}bg-white text-slate-500 border-slate-200 hover:border-navy hover:text-navy{% endif %}">
+        {% trans "Tous" %}
+      </a>
+      {% for cat_val, cat_label in categories %}
+      <a href="?cat={{ cat_val }}"
+         class="text-xs font-medium px-4 py-1.5 rounded-full border transition-colors no-underline
+                {% if categorie_active == cat_val %}bg-navy text-white border-navy{% else %}bg-white text-slate-500 border-slate-200 hover:border-navy hover:text-navy{% endif %}">
+        {{ cat_label }}
+      </a>
+      {% endfor %}
+    </div>
+
+    {# Article phare #}
+    {% if article_phare %}
+    <article class="grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden border border-slate-200 mb-8 hover:shadow-xl hover:shadow-navy/10 transition-all duration-300">
+
+      <div class="relative bg-gradient-to-br from-navy/10 to-sky/20 flex items-center justify-center min-h-[180px] overflow-hidden">
+        {% if article_phare.image_principale %}
+          {% image article_phare.image_principale fill-600x400 as img %}
+          <img src="{{ img.url }}" alt="{{ article_phare.title }}" class="w-full h-full object-cover absolute inset-0">
+        {% else %}
+          <span class="text-5xl">{{ article_phare.emoji_fallback }}</span>
+        {% endif %}
+        <span class="absolute top-3 left-3 text-[9px] font-bold px-2.5 py-1 rounded-full tracking-widest uppercase bg-sky/20 border border-sky/35 text-sky">
+          {{ article_phare.get_categorie_display }}
+        </span>
+      </div>
+
+      <div class="p-6 flex flex-col justify-center">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-xs text-slate-400">{{ article_phare.date_publi|date:"d F Y" }}</span>
+          <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+          <span class="text-xs text-slate-400">{{ article_phare.temps_lecture }} min</span>
+          <span class="ml-auto text-[10px] font-bold text-sky">✦ {% trans "Article phare" %}</span>
+        </div>
+        <h2 class="font-display font-bold text-navy text-lg leading-snug mb-3">{{ article_phare.title }}</h2>
+        <p class="text-sm text-slate-500 leading-relaxed mb-4">{{ article_phare.chapeau|truncatewords:30 }}</p>
+        <a href="{% pageurl article_phare %}" class="inline-flex items-center gap-1 text-sm font-semibold text-sky no-underline hover:gap-2 transition-all">
+          {% trans "Lire l'article" %} →
+        </a>
+        <div class="flex items-center gap-2 mt-4 pt-4 border-t border-slate-100">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-navy to-sky flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
+            {{ article_phare.initiales_auteur }}
+          </div>
+          <span class="text-xs font-semibold text-slate-700">{{ article_phare.auteur }}</span>
+        </div>
+      </div>
+    </article>
+    {% endif %}
+
+    {# Grille articles #}
+    {% if articles %}
+    <h2 class="font-display font-bold text-navy text-lg mb-5">{% trans "Articles récents" %}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      {% for article in articles %}
+      <article class="bg-white rounded-xl overflow-hidden border border-slate-200 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 flex flex-col">
+
+        <div class="relative h-36 bg-gradient-to-br from-navy/8 to-sky/15 flex items-center justify-center overflow-hidden">
+          {% if article.image_principale %}
+            {% image article.image_principale fill-500x280 as img %}
+            <img src="{{ img.url }}" alt="{{ article.title }}" class="w-full h-full object-cover absolute inset-0">
+          {% else %}
+            <span class="text-3xl">{{ article.emoji_fallback }}</span>
+          {% endif %}
+          <span class="absolute top-2.5 left-2.5 text-[9px] font-bold px-2.5 py-1 rounded-full tracking-widest uppercase bg-navy/12 text-navy">
+            {{ article.get_categorie_display }}
+          </span>
+        </div>
+
+        <div class="p-4 flex flex-col flex-1">
+          <div class="flex items-center gap-2 mb-2 text-[10px] text-slate-400">
+            <span>{{ article.date_publi|date:"d M Y" }}</span>
+            <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+            <span>{{ article.temps_lecture }} min</span>
+          </div>
+          <h3 class="font-display font-bold text-navy text-sm leading-snug mb-2 flex-1">{{ article.title }}</h3>
+          {% if article.chapeau %}
+          <p class="text-xs text-slate-500 leading-relaxed mb-3">{{ article.chapeau|truncatewords:20 }}</p>
+          {% endif %}
+          <a href="{% pageurl article %}" class="inline-flex items-center gap-1 text-xs font-semibold text-sky no-underline mt-auto">
+            {% trans "Lire" %} →
+          </a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="text-center py-16">
+      <p class="text-3xl mb-3">📝</p>
+      <h2 class="font-display font-bold text-navy text-xl mb-2">{% trans "Aucun article trouvé" %}</h2>
+      <p class="text-slate-500 mb-5">{% trans "Revenez bientôt ou essayez un autre filtre." %}</p>
+      <a href="/blog/" class="inline-flex items-center gap-2 bg-navy text-white text-sm font-medium px-6 py-2.5 rounded-lg no-underline">
+        {% trans "Voir tous les articles" %}
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+
+  {# ── Sidebar ─────────────────────────────────────────────── #}
+  <aside class="bg-slate-50 px-6 py-10">
+
+    {# Catégories #}
+    <h3 class="font-display font-bold text-navy text-sm mb-4">{% trans "Catégories" %}</h3>
+    <ul class="mb-8 divide-y divide-slate-200 list-none">
+      {% for cat_val, cat_label in categories %}
+      <li>
+        <a href="?cat={{ cat_val }}"
+           class="flex items-center justify-between py-2.5 no-underline hover:text-sky transition-colors
+                  {% if categorie_active == cat_val %}text-sky{% else %}text-slate-700{% endif %}">
+          <span class="flex items-center gap-2 text-sm">
+            <span class="w-1.5 h-1.5 rounded-full {% if categorie_active == cat_val %}bg-sky{% else %}bg-slate-300{% endif %} flex-shrink-0"></span>
+            {{ cat_label }}
+          </span>
+          {% if cat_counts %}
+          <span class="text-[10px] font-bold bg-sky-light text-sky px-2 py-0.5 rounded-full">
+            {{ cat_counts|get_item:cat_val|default:"0" }}
+          </span>
+          {% endif %}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    {# Articles populaires #}
+    <h3 class="font-display font-bold text-navy text-sm mb-4">{% trans "Articles populaires" %}</h3>
+    <div class="mb-8 divide-y divide-slate-200">
+      {% for art in articles_populaires %}
+      <div class="flex gap-3 py-3">
+        <span class="font-display text-xl font-extrabold text-slate-200 leading-none min-w-[24px]">
+          0{{ forloop.counter }}
+        </span>
+        <div>
+          <a href="{% pageurl art %}" class="text-xs font-semibold text-navy leading-snug no-underline hover:text-sky transition-colors">
+            {{ art.title }}
+          </a>
+          <p class="text-[10px] text-slate-400 mt-0.5">{{ art.date_publi|date:"d M Y" }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {# Newsletter #}
+    <div class="bg-gradient-to-br from-navy to-sky rounded-xl p-5">
+      <h3 class="font-display font-bold text-white text-sm mb-2">{% trans "Restez informé" %}</h3>
+      <p class="text-xs text-white/70 leading-relaxed mb-4">
+        {% trans "Recevez nos tutoriels et actualités géospatiales chaque mois." %}
+      </p>
+      <form method="POST" action="/contact/envoyer/" class="flex flex-col gap-2">
+        {% csrf_token %}
+        <input type="hidden" name="sujet" value="renseignement">
+        <input type="hidden" name="prenom" value="Abonné">
+        <input type="hidden" name="nom" value="Newsletter">
+        <input type="hidden" name="message" value="Abonnement newsletter blog">
+        <input type="hidden" name="rgpd" value="on">
+        <input type="email" name="email" required placeholder="votre@email.com"
+               class="w-full bg-white/15 border border-white/30 rounded-lg px-3 py-2 text-sm text-white placeholder-white/50 focus:outline-none focus:border-white/60">
+        <button type="submit"
+                class="w-full bg-white text-navy font-bold text-sm py-2.5 rounded-lg border-none cursor-pointer hover:bg-slate-50 transition-colors">
+          {% trans "S'abonner" %}
+        </button>
+      </form>
+    </div>
+
+  </aside>
+</div>
+
+{% endblock %}

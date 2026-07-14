@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags i18n %}
+
+{% block title %}Innov Geomatics Consulting — L'expertise géospatiale en Afrique{% endblock %}
+{% block meta_description %}Cabinet de consulting et de formation en géomatique à Ouagadougou. SIG, télédétection, cartographie web et formations pour professionnels en Afrique.{% endblock %}
+
+{% block content %}
+
+{# ═══════════════════════════════════════════════════════ HERO ═══════ #}
+<section class="relative min-h-screen flex items-center px-[5%] pt-[100px] pb-16 overflow-hidden bg-gradient-to-br from-navy-dark via-navy to-[#1B4FA0]">
+
+  {# Grille de fond #}
+  <div class="absolute inset-0 opacity-[0.06]"
+       style="background-image: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.5) 40px, rgba(255,255,255,0.5) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.5) 40px, rgba(255,255,255,0.5) 41px);"
+       aria-hidden="true"></div>
+
+  {# Blob déco #}
+  <div class="absolute -right-24 -bottom-24 w-[600px] h-[600px] rounded-full bg-sky/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute left-[30%] -top-20 w-96 h-96 rounded-full bg-sky/5 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+  {# Contenu principal #}
+  <div class="relative z-10 max-w-2xl animate-fade-up">
+
+    {# Badge statut #}
+    <div class="inline-flex items-center gap-2 bg-sky/20 border border-sky/35 text-sky text-xs font-semibold px-4 py-1.5 rounded-full mb-7 tracking-widest uppercase">
+      <span class="w-2 h-2 bg-sky rounded-full animate-pulse"></span>
+      {% trans "Consulting · Géomatique · Formation" %}
+    </div>
+
+    <h1 class="font-display text-[clamp(36px,5vw,58px)] font-extrabold text-white leading-[1.08] mb-5">
+      {% blocktrans %}L'expertise <span class="text-sky">géospatiale</span> au service de l'Afrique{% endblocktrans %}
+    </h1>
+
+    <p class="text-lg font-light text-white/70 leading-relaxed mb-10 max-w-lg">
+      {{ page.hero_subtitle|default:"Innov Geomatics Consulting accompagne les organisations dans leurs projets SIG, télédétection et cartographie web — de Ouagadougou à l'ensemble du continent." }}
+    </p>
+
+    <div class="flex flex-wrap gap-4">
+      <a href="/services/" class="inline-flex items-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium text-base px-8 py-3.5 rounded-lg transition-all hover:-translate-y-px no-underline">
+        {% trans "Nos services" %}
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+      <a href="/contact/" class="inline-flex items-center gap-2 bg-transparent border border-white/30 hover:border-white/60 hover:bg-white/5 text-white font-medium text-base px-8 py-3.5 rounded-lg transition-all no-underline">
+        {% trans "Prendre contact" %}
+      </a>
+    </div>
+
+    {# Stats #}
+    <div class="flex flex-wrap gap-10 mt-14 pt-10 border-t border-white/10">
+      <div>
+        <p class="font-display text-[32px] font-extrabold text-white leading-none">{{ page.stat_projects|default:"50" }}<span class="text-sky">+</span></p>
+        <p class="text-xs text-white/45 mt-1">{% trans "Projets réalisés" %}</p>
+      </div>
+      <div>
+        <p class="font-display text-[32px] font-extrabold text-white leading-none">{{ page.stat_trained|default:"200" }}<span class="text-sky">+</span></p>
+        <p class="text-xs text-white/45 mt-1">{% trans "Professionnels formés" %}</p>
+      </div>
+      <div>
+        <p class="font-display text-[32px] font-extrabold text-white leading-none">{{ page.stat_countries|default:"10" }}<span class="text-sky">+</span></p>
+        <p class="text-xs text-white/45 mt-1">{% trans "Pays couverts" %}</p>
+      </div>
+    </div>
+  </div>
+
+  {# Carte SVG Afrique / Burkina #}
+  <div class="absolute right-[5%] top-1/2 -translate-y-1/2 w-[min(420px,38vw)] opacity-80 hidden lg:block" aria-hidden="true">
+    {% include "includes/africa_map.svg.html" %}
+  </div>
+</section>
+
+
+{# ═══════════════════════════════════════════════════════ SERVICES ═══ #}
+<section id="services" class="bg-slate-50 px-[5%] py-24">
+  <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Ce que nous faisons" %}</p>
+  <h2 class="font-display text-[clamp(26px,3.5vw,40px)] font-bold text-navy leading-tight mb-3">{% trans "Nos domaines d'expertise" %}</h2>
+  <p class="text-base text-slate-500 leading-relaxed max-w-lg mb-14">
+    {% trans "Des solutions géospatiales complètes, du terrain au web, adaptées aux réalités africaines." %}
+  </p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+    {% for service in services %}
+    <article class="bg-white rounded-2xl p-8 border border-slate-200 hover:border-sky hover:-translate-y-1 hover:shadow-xl hover:shadow-navy/10 transition-all duration-300 cursor-pointer group">
+      <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5 text-2xl {{ service.icon_bg_class|default:'bg-sky/10' }}">
+        {{ service.icon_emoji }}
+      </div>
+      <h3 class="font-display font-bold text-navy text-lg mb-2.5">{{ service.title }}</h3>
+      <p class="text-sm text-slate-500 leading-relaxed">{{ service.description }}</p>
+      <a href="{{ service.url }}" class="inline-flex items-center gap-1 mt-5 text-xs font-semibold text-sky no-underline group-hover:gap-2 transition-all">
+        {% trans "En savoir plus" %} →
+      </a>
+    </article>
+    {% empty %}
+    {# Fallback statique si aucun service en base #}
+    {% include "includes/services_fallback.html" %}
+    {% endfor %}
+  </div>
+</section>
+
+
+{# ═══════════════════════════════════════════════════════ POURQUOI NOUS ══ #}
+<section id="a-propos" class="px-[5%] py-24">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+    {# Visual card #}
+    <div class="relative bg-gradient-to-br from-navy to-[#1B4FA0] rounded-2xl p-12 overflow-hidden">
+      <div class="absolute inset-0 opacity-[0.07]"
+           style="background-image: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.5) 20px, rgba(255,255,255,0.5) 21px);"
+           aria-hidden="true"></div>
+      <div class="relative z-10 flex flex-col gap-8">
+        {% for feat in why_features %}
+        <div class="flex gap-5 items-start">
+          <div class="w-11 h-11 rounded-xl bg-sky/20 border border-sky/30 flex items-center justify-center flex-shrink-0 text-lg">
+            {{ feat.icon }}
+          </div>
+          <div>
+            <h4 class="font-display font-bold text-white text-[15px] mb-1">{{ feat.title }}</h4>
+            <p class="text-sm text-white/55 leading-relaxed">{{ feat.description }}</p>
+          </div>
+        </div>
+        {% empty %}
+        {# Fallback #}
+        {% for feat in default_why_features %}
+        <div class="flex gap-5 items-start">
+          <div class="w-11 h-11 rounded-xl bg-sky/20 border border-sky/30 flex items-center justify-center flex-shrink-0 text-lg">{{ feat.0 }}</div>
+          <div>
+            <h4 class="font-display font-bold text-white text-[15px] mb-1">{{ feat.1 }}</h4>
+            <p class="text-sm text-white/55 leading-relaxed">{{ feat.2 }}</p>
+          </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+
+    {# Points #}
+    <div>
+      <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Pourquoi nous choisir" %}</p>
+      <h2 class="font-display text-[clamp(26px,3.5vw,40px)] font-bold text-navy leading-tight mb-10">
+        {% trans "Une approche qui fait la différence" %}
+      </h2>
+
+      <div class="flex flex-col gap-0">
+        <div class="flex gap-5 items-start pb-7 border-b border-slate-100">
+          <span class="font-display text-[28px] font-extrabold text-sky leading-none min-w-[40px]">01</span>
+          <div>
+            <h4 class="font-display font-bold text-navy text-base mb-1.5">{% trans "Expertise reconnue" %}</h4>
+            <p class="text-sm text-slate-500 leading-relaxed">{% trans "Plus de 10 ans d'expérience en géomatique appliquée à l'Afrique de l'Ouest, avec des projets menés pour des institutions internationales." %}</p>
+          </div>
+        </div>
+        <div class="flex gap-5 items-start py-7 border-b border-slate-100">
+          <span class="font-display text-[28px] font-extrabold text-sky leading-none min-w-[40px]">02</span>
+          <div>
+            <h4 class="font-display font-bold text-navy text-base mb-1.5">{% trans "Solutions sur-mesure" %}</h4>
+            <p class="text-sm text-slate-500 leading-relaxed">{% trans "Chaque livrable est conçu selon les besoins spécifiques du client et le contexte local du projet." %}</p>
+          </div>
+        </div>
+        <div class="flex gap-5 items-start pt-7">
+          <span class="font-display text-[28px] font-extrabold text-sky leading-none min-w-[40px]">03</span>
+          <div>
+            <h4 class="font-display font-bold text-navy text-base mb-1.5">{% trans "Open Source & souveraineté" %}</h4>
+            <p class="text-sm text-slate-500 leading-relaxed">{% trans "Nous privilégions les technologies open source (QGIS, PostGIS, Django, Leaflet) pour garantir l'indépendance technologique de nos clients." %}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{# ═══════════════════════════════════════════════════════ FORMATIONS ══ #}
+<section id="formations" class="bg-slate-50 px-[5%] py-24">
+  <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Montée en compétences" %}</p>
+  <h2 class="font-display text-[clamp(26px,3.5vw,40px)] font-bold text-navy leading-tight mb-3">{% trans "Formations disponibles" %}</h2>
+  <p class="text-base text-slate-500 leading-relaxed max-w-lg mb-14">
+    {% trans "Des formations certifiantes en présentiel et en ligne, conçues par des praticiens pour des praticiens." %}
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
+    {% for formation in formations %}
+    <article class="bg-white rounded-2xl overflow-hidden border border-slate-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-navy/10 transition-all duration-300">
+
+      <div class="bg-gradient-to-br from-navy to-[#1B4FA0] p-8 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_80%_20%,#29ABE2,transparent)]"></div>
+        <div class="relative z-10">
+          {% if formation.est_disponible %}
+          <span class="inline-flex items-center gap-1.5 bg-sky/20 border border-sky/35 text-sky text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+            <span class="w-1.5 h-1.5 bg-sky rounded-full animate-pulse"></span>
+            {% trans "Disponible" %}
+          </span>
+          {% else %}
+          <span class="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 text-white/50 text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+            {% trans "Prochainement" %}
+          </span>
+          {% endif %}
+          <h3 class="font-display font-bold text-white text-lg leading-snug mb-2">{{ formation.titre }}</h3>
+          <p class="text-sm text-white/55 leading-relaxed">{{ formation.description_courte }}</p>
+        </div>
+      </div>
+
+      <div class="p-7">
+        <div class="flex flex-wrap gap-4 mb-5 text-sm text-slate-400">
+          {% if formation.duree %}<span class="flex items-center gap-1.5">⏱ {{ formation.duree }}</span>{% endif %}
+          {% if formation.nb_participants %}<span class="flex items-center gap-1.5">👥 {{ formation.nb_participants }}</span>{% endif %}
+          {% if formation.lieu %}<span class="flex items-center gap-1.5">📍 {{ formation.lieu }}</span>{% endif %}
+        </div>
+
+        {% if formation.modules.all %}
+        <ul class="mb-6 space-y-0 divide-y divide-slate-100">
+          {% for module in formation.modules.all|slice:":5" %}
+          <li class="flex items-center gap-3 text-sm text-slate-700 py-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky flex-shrink-0"></span>
+            {{ module.titre }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if formation.est_disponible %}
+        <a href="/formations/{{ formation.slug }}/" class="flex items-center justify-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium text-sm px-6 py-3 rounded-lg transition-colors no-underline w-full">
+          {% trans "S'inscrire" %} →
+        </a>
+        {% else %}
+        <a href="/contact/?formation={{ formation.slug }}" class="flex items-center justify-center gap-2 border border-slate-200 hover:border-sky hover:text-sky text-slate-400 font-medium text-sm px-6 py-3 rounded-lg transition-colors no-underline w-full">
+          {% trans "Rejoindre la liste" %} →
+        </a>
+        {% endif %}
+      </div>
+    </article>
+    {% empty %}
+    <div class="col-span-full text-center py-16 text-slate-400">
+      {% trans "Aucune formation disponible pour le moment." %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="mt-10 text-center">
+    <a href="/formations/" class="inline-flex items-center gap-2 border border-navy text-navy hover:bg-navy hover:text-white font-medium text-sm px-8 py-3 rounded-lg transition-all no-underline">
+      {% trans "Voir toutes les formations" %} →
+    </a>
+  </div>
+</section>
+
+
+{# ═══════════════════════════════════════════════════════ PROJETS ═════ #}
+{% if projets %}
+<section id="projets" class="px-[5%] py-24">
+  <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Notre portfolio" %}</p>
+  <h2 class="font-display text-[clamp(26px,3.5vw,40px)] font-bold text-navy leading-tight mb-14">{% trans "Projets récents" %}</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for projet in projets|slice:":3" %}
+    <article class="group rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:shadow-navy/10 hover:-translate-y-1 transition-all duration-300">
+      {% if projet.image %}
+      {% image projet.image fill-600x400 as proj_img %}
+      <img src="{{ proj_img.url }}" alt="{{ projet.titre }}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+      {% else %}
+      <div class="w-full h-48 bg-gradient-to-br from-navy to-sky/50 flex items-center justify-center">
+        <svg class="w-12 h-12 fill-white/40" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
+      </div>
+      {% endif %}
+      <div class="p-6">
+        <span class="text-[10px] font-bold text-sky tracking-widest uppercase">{{ projet.categorie }}</span>
+        <h3 class="font-display font-bold text-navy text-base mt-1 mb-2">{{ projet.titre }}</h3>
+        <p class="text-sm text-slate-500 leading-relaxed line-clamp-2">{{ projet.description_courte }}</p>
+        <a href="/projets/{{ projet.slug }}/" class="inline-flex items-center gap-1 mt-4 text-xs font-semibold text-sky no-underline hover:gap-2 transition-all">
+          {% trans "Voir le projet" %} →
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <div class="mt-10 text-center">
+    <a href="/projets/" class="inline-flex items-center gap-2 border border-navy text-navy hover:bg-navy hover:text-white font-medium text-sm px-8 py-3 rounded-lg transition-all no-underline">
+      {% trans "Voir tous les projets" %} →
+    </a>
+  </div>
+</section>
+{% endif %}
+
+
+{# ═══════════════════════════════════════════════════════ CTA CONTACT ═ #}
+<section id="contact" class="relative bg-gradient-to-br from-navy-dark via-navy to-navy text-center px-[5%] py-24 overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(41,171,226,0.12),transparent_70%)]" aria-hidden="true"></div>
+  <div class="relative z-10">
+    <h2 class="font-display text-[clamp(26px,3.5vw,42px)] font-bold text-white mb-4">{% trans "Parlons de votre projet" %}</h2>
+    <p class="text-lg text-white/60 leading-relaxed max-w-lg mx-auto mb-10">
+      {% trans "Que vous ayez besoin d'une cartographie, d'un SIG ou d'une formation pour votre équipe — nous sommes là." %}
+    </p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="mailto:contact@innovgeomatic.com" class="inline-flex items-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium px-8 py-3.5 rounded-lg transition-colors no-underline">
+        ✉ {% trans "Envoyer un message" %}
+      </a>
+      <a href="tel:+22600000000" class="inline-flex items-center gap-2 bg-transparent border border-white/30 hover:border-white/60 hover:bg-white/5 text-white font-medium px-8 py-3.5 rounded-lg transition-all no-underline">
+        📞 {% trans "Nous appeler" %}
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
