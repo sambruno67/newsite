@@ -1,1 +1,1 @@
-web: python manage.py migrate --run-syncdb && python manage.py collectstatic --noinput && gunicorn innovgeomatic.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
+web: gunicorn innovgeomatic.wsgi:application --bind 0.0.0.0:$PORT --log-level debug --access-logfile - --error-logfile -
