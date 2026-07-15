@@ -32,6 +32,7 @@ class HomePage(Page):
         "contact.ContactPage",
         "projets.ProjetsIndexPage",
         "blog.BlogIndexPage",
+        "apropos.AproposPage",
         ]
 
     def get_context(self, request, *args, **kwargs):

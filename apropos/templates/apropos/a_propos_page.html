@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags i18n %}
+
+{% block title %}À propos — Innov Geomatics Consulting{% endblock %}
+{% block meta_description %}Découvrez l'histoire, la mission et l'équipe d'Innov Geomatics Consulting, cabinet de géomatique basé à Ouagadougou, Burkina Faso.{% endblock %}
+
+{% block content %}
+
+{# ══════════════════════════════════════════════ HERO ══════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-[#1B4FA0] px-[5%] pt-[120px] pb-14 overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.05]"
+       style="background-image:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px),repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(255,255,255,.5) 30px,rgba(255,255,255,.5) 31px);"
+       aria-hidden="true"></div>
+  <div class="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-sky/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+  <nav class="flex items-center gap-2 mb-5 relative z-10" aria-label="Fil d'Ariane">
+    <a href="/" class="text-sky text-xs hover:underline">{% trans "Accueil" %}</a>
+    <span class="text-white/30 text-xs">›</span>
+    <span class="text-white/60 text-xs">{% trans "À propos" %}</span>
+  </nav>
+
+  <div class="relative z-10 max-w-2xl">
+    <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Qui sommes-nous" %}</p>
+    <h1 class="font-display text-[clamp(26px,4vw,44px)] font-extrabold text-white leading-tight mb-3">
+      Innov Geomatics Consulting
+    </h1>
+    <p class="text-sm text-white/65 leading-relaxed">{{ page.intro }}</p>
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════ MISSION & VISION ══ #}
+<section class="px-[5%] py-16">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+    <div class="bg-gradient-to-br from-navy to-[#1B4FA0] rounded-2xl p-8">
+      <div class="w-10 h-10 rounded-xl bg-sky/25 flex items-center justify-center text-xl mb-5">🎯</div>
+      <h2 class="font-display font-bold text-white text-xl mb-3">{% trans "Notre mission" %}</h2>
+      <p class="text-sm text-white/65 leading-relaxed">{{ page.mission }}</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-8 border border-slate-200">
+      <div class="w-10 h-10 rounded-xl bg-navy/8 flex items-center justify-center text-xl mb-5">🌍</div>
+      <h2 class="font-display font-bold text-navy text-xl mb-3">{% trans "Notre vision" %}</h2>
+      <p class="text-sm text-slate-500 leading-relaxed">{{ page.vision }}</p>
+    </div>
+
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════ TIMELINE ═══════════ #}
+{% if page.timeline.all %}
+<section class="bg-slate-50 px-[5%] py-16">
+  <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Notre parcours" %}</p>
+  <h2 class="font-display text-[clamp(22px,3vw,36px)] font-bold text-navy mb-10">{% trans "Une histoire ancrée dans le terrain" %}</h2>
+
+  <div class="relative pl-6">
+    <div class="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-sky to-navy" aria-hidden="true"></div>
+
+    <div class="flex flex-col gap-0">
+      {% for etape in page.timeline.all %}
+      <div class="flex gap-6 pb-8 relative">
+        <div class="absolute -left-4 top-1 w-3.5 h-3.5 rounded-full border-2 border-white shadow-[0_0_0_2px_{% if etape.est_actuel %}#1A3A8F{% else %}#29ABE2{% endif %}]
+                    {% if etape.est_actuel %}bg-navy{% else %}bg-sky{% endif %}
+                    flex-shrink-0 z-10"></div>
+        <div class="font-display text-sm font-extrabold text-sky min-w-[44px] pt-0.5">{{ etape.annee }}</div>
+        <div>
+          <h3 class="font-display font-bold text-navy text-base mb-1">{{ etape.titre }}</h3>
+          <p class="text-sm text-slate-500 leading-relaxed">{{ etape.description }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+
+{# ══════════════════════════════════════════════ ÉQUIPE ════════════ #}
+{% if page.membres.all %}
+<section class="px-[5%] py-16">
+  <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "L'équipe" %}</p>
+  <h2 class="font-display text-[clamp(22px,3vw,36px)] font-bold text-navy mb-3">{% trans "Des experts du terrain" %}</h2>
+  <p class="text-sm text-slate-500 mb-10 max-w-lg">{% trans "Une équipe pluridisciplinaire alliant géomatique, développement et formation." %}</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for membre in page.membres.all %}
+    <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 text-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+      <div class="h-24 flex items-center justify-center font-display text-2xl font-extrabold text-white"
+           style="background: {{ membre.couleur_bg }}">
+        {{ membre.initiales }}
+      </div>
+      <div class="p-5">
+        <h3 class="font-display font-bold text-navy text-base mb-1">{{ membre.nom }}</h3>
+        <p class="text-xs text-slate-400 mb-4">{{ membre.poste }}</p>
+        {% if membre.competences_list %}
+        <div class="flex flex-wrap gap-1.5 justify-center">
+          {% for comp in membre.competences_list %}
+          <span class="text-[10px] font-semibold bg-sky-light text-navy px-2.5 py-0.5 rounded-full">{{ comp }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+
+{# ══════════════════════════════════════════════ VALEURS ═══════════ #}
+<section class="bg-slate-50 px-[5%] py-16">
+  <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Ce qui nous guide" %}</p>
+  <h2 class="font-display text-[clamp(22px,3vw,36px)] font-bold text-navy mb-10">{% trans "Nos valeurs" %}</h2>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+    {% for valeur in valeurs_statiques %}
+    <div class="bg-white rounded-2xl p-6 border border-slate-200 text-center hover:border-sky transition-colors">
+      <div class="text-3xl mb-4">{{ valeur.emoji }}</div>
+      <h3 class="font-display font-bold text-navy text-sm mb-2">{{ valeur.titre }}</h3>
+      <p class="text-xs text-slate-500 leading-relaxed">{{ valeur.description }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════════════ PARTENAIRES ════════ #}
+{% if page.partenaires.all %}
+<section class="px-[5%] py-16">
+  <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Ils nous font confiance" %}</p>
+  <h2 class="font-display text-[clamp(22px,3vw,36px)] font-bold text-navy mb-8">{% trans "Partenaires & clients" %}</h2>
+
+  <div class="flex flex-wrap gap-3">
+    {% for partenaire in page.partenaires.all %}
+    <div class="flex items-center gap-2 border border-slate-200 rounded-xl px-5 py-3 text-sm font-semibold text-slate-600 bg-white hover:border-sky hover:text-navy transition-colors">
+      <span>{{ partenaire.emoji }}</span>
+      <span>{{ partenaire.nom }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+
+{# ══════════════════════════════════════════════ CTA ═══════════════ #}
+<section class="relative bg-gradient-to-br from-navy-dark via-navy to-navy text-center px-[5%] py-20 overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(41,171,226,0.12),transparent_70%)]" aria-hidden="true"></div>
+  <div class="relative z-10">
+    <h2 class="font-display text-[clamp(22px,3vw,38px)] font-bold text-white mb-4">{% trans "Travaillons ensemble" %}</h2>
+    <p class="text-base text-white/60 leading-relaxed max-w-md mx-auto mb-8">
+      {% trans "Vous avez un projet géospatial ou souhaitez former vos équipes ? Contactez-nous." %}
+    </p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="/contact/" class="inline-flex items-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium px-8 py-3.5 rounded-lg transition-colors no-underline">
+        ✉ {% trans "Nous contacter" %}
+      </a>
+      <a href="/services/" class="inline-flex items-center gap-2 border border-white/30 hover:border-white/60 hover:bg-white/5 text-white font-medium px-8 py-3.5 rounded-lg transition-all no-underline">
+        {% trans "Voir nos services" %} →
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
