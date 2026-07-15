@@ -1,0 +1,26 @@
+{
+  "name": "innovgeomatic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "build:css": "tailwindcss -i ./innovgeomatic/static/css/input.css -o ./innovgeomatic/static/css/tailwind.css --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sambruno67/newsite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sambruno67/newsite/issues"
+  },
+  "homepage": "https://github.com/sambruno67/newsite#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}
+
+
