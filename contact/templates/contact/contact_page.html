@@ -120,10 +120,27 @@
     {% endif %}
 
     {# Placeholder carte #}
-    <div class="rounded-xl overflow-hidden border border-slate-200 h-36 bg-gradient-to-br from-navy/5 to-sky/10 flex items-center justify-center relative">
-      <div class="w-3 h-3 bg-sky rounded-full shadow-[0_0_0_6px_rgba(41,171,226,0.2)]"></div>
-      <span class="absolute bottom-2 left-3 text-[10px] text-slate-400 font-medium">📍 Ouagadougou, BF</span>
-    </div>
+    {# Carte Leaflet réelle #}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<div id="contact-map" class="rounded-xl overflow-hidden border border-slate-200 h-48 z-10 relative"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var lat = 12.3714;   // ← remplace par tes coordonnées exactes
+    var lng = -1.5197;   // ← remplace par tes coordonnées exactes
+    
+    var map = L.map('contact-map').setView([lat, lng], 15);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    L.marker([lat, lng])
+      .addTo(map)
+      .bindPopup('<b>Innov Geomatics Consulting</b><br>Ouagadougou, Burkina Faso')
+      .openPopup();
+  });
+</script>
   </aside>
 
 
