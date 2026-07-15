@@ -1,1 +1,1 @@
-web: python manage.py collectstatic --noinput && python manage.py migrate --noinput && gunicorn innovgeomatic.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
+web: npm install && npm run build:css && python manage.py collectstatic --noinput && python manage.py migrate --noinput && gunicorn innovgeomatic.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
