@@ -50,7 +50,7 @@
 
 
 {# ══════════════════════════════════════════════ TIMELINE ═══════════ #}
-{% if page.timeline.all %}
+{% if timeline %}
 <section class="bg-slate-50 px-[5%] py-16">
   <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Notre parcours" %}</p>
   <h2 class="font-display text-[clamp(22px,3vw,36px)] font-bold text-navy mb-10">{% trans "Une histoire ancrée dans le terrain" %}</h2>
@@ -59,7 +59,7 @@
     <div class="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-sky to-navy" aria-hidden="true"></div>
 
     <div class="flex flex-col gap-0">
-      {% for etape in page.timeline.all %}
+      {% for etape in timeline %}
       <div class="flex gap-6 pb-8 relative">
         <div class="absolute -left-4 top-1 w-3.5 h-3.5 rounded-full border-2 border-white shadow-[0_0_0_2px_{% if etape.est_actuel %}#1A3A8F{% else %}#29ABE2{% endif %}]
                     {% if etape.est_actuel %}bg-navy{% else %}bg-sky{% endif %}
@@ -78,14 +78,14 @@
 
 
 {# ══════════════════════════════════════════════ ÉQUIPE ════════════ #}
-{% if page.membres.all %}
+{% if membres %}
 <section class="px-[5%] py-16">
   <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "L'équipe" %}</p>
   <h2 class="font-display text-[clamp(22px,3vw,36px)] font-bold text-navy mb-3">{% trans "Des experts du terrain" %}</h2>
   <p class="text-sm text-slate-500 mb-10 max-w-lg">{% trans "Une équipe pluridisciplinaire alliant géomatique, développement et formation." %}</p>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-    {% for membre in page.membres.all %}
+    {% for membre in membres %}
     <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 text-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
       <div class="h-24 flex items-center justify-center font-display text-2xl font-extrabold text-white"
            style="background: {{ membre.couleur_bg }}">
@@ -127,13 +127,13 @@
 
 
 {# ══════════════════════════════════════════════ PARTENAIRES ════════ #}
-{% if page.partenaires.all %}
+{% if partenaires %}
 <section class="px-[5%] py-16">
   <p class="text-xs font-bold tracking-[0.12em] uppercase text-sky mb-2">{% trans "Ils nous font confiance" %}</p>
   <h2 class="font-display text-[clamp(22px,3vw,36px)] font-bold text-navy mb-8">{% trans "Partenaires & clients" %}</h2>
 
   <div class="flex flex-wrap gap-3">
-    {% for partenaire in page.partenaires.all %}
+    {% for partenaire in partenaires%}
     <div class="flex items-center gap-2 border border-slate-200 rounded-xl px-5 py-3 text-sm font-semibold text-slate-600 bg-white hover:border-sky hover:text-navy transition-colors">
       <span>{{ partenaire.emoji }}</span>
       <span>{{ partenaire.nom }}</span>
