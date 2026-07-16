@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ contact.nom_complet }} — CRM{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+  <div class="bg-navy px-[5%] py-6 pt-24">
+    <nav class="flex items-center gap-2 mb-4 text-xs">
+      <a href="{% url 'crm:dashboard' %}" class="text-sky no-underline hover:underline">CRM</a>
+      <span class="text-white/30">›</span>
+      <a href="{% url 'crm:liste_contacts' %}" class="text-sky no-underline hover:underline">Contacts</a>
+      <span class="text-white/30">›</span>
+      <span class="text-white/60">{{ contact.nom_complet }}</span>
+    </nav>
+    <div class="flex items-center justify-between">
+      <h1 class="font-display text-2xl font-bold text-white">{{ contact.nom_complet }}</h1>
+      <span class="text-xs font-semibold px-3 py-1 rounded-full
+        {% if contact.statut == 'client' %}bg-green-500/20 text-green-300
+        {% elif contact.statut == 'nouveau' %}bg-sky/20 text-sky
+        {% else %}bg-white/10 text-white/70{% endif %}">
+        {{ contact.get_statut_display }}
+      </span>
+    </div>
+  </div>
+
+  <div class="px-[5%] py-8 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
+
+    {# ── Sidebar gauche ── #}
+    <div class="flex flex-col gap-5">
+
+      {# Infos contact #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <div class="w-14 h-14 rounded-full bg-navy/10 flex items-center justify-center text-navy text-xl font-bold mb-4">
+          {{ contact.initiales }}
+        </div>
+        <h2 class="font-display font-bold text-navy text-lg mb-0.5">{{ contact.nom_complet }}</h2>
+        {% if contact.poste %}<p class="text-sm text-slate-400 mb-1">{{ contact.poste }}</p>{% endif %}
+        {% if contact.organisation %}<p class="text-sm text-slate-500 font-medium mb-4">{{ contact.organisation }}</p>{% endif %}
+
+        <div class="flex flex-col gap-3 text-sm">
+          {% if contact.email %}
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400 text-xs w-16">Email</span>
+            <a href="mailto:{{ contact.email }}" class="text-sky no-underline hover:underline truncate">{{ contact.email }}</a>
+          </div>
+          {% endif %}
+          {% if contact.telephone %}
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400 text-xs w-16">Tél.</span>
+            <a href="tel:{{ contact.telephone }}" class="text-slate-700 no-underline">{{ contact.telephone }}</a>
+          </div>
+          {% endif %}
+          {% if contact.lieu %}
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400 text-xs w-16">Lieu</span>
+            <span class="text-slate-700">{{ contact.lieu }}</span>
+          </div>
+          {% endif %}
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400 text-xs w-16">Source</span>
+            <span class="text-slate-700">{{ contact.get_source_display }}</span>
+          </div>
+        </div>
+
+        {# Tags #}
+        {% if contact.tags.all %}
+        <div class="mt-4 pt-4 border-t border-slate-100">
+          <p class="text-xs text-slate-400 mb-2">Tags</p>
+          <div class="flex flex-wrap gap-1.5">
+            {% for tag in contact.tags.all %}
+            <span class="text-[11px] font-semibold bg-sky-light text-navy px-2.5 py-1 rounded-full">{{ tag.nom }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      {# Pipeline & Devis #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h3 class="font-display font-bold text-navy text-sm mb-4">Pipeline commercial</h3>
+        <form method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="update_statut">
+          <div class="flex flex-col gap-3">
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Statut</label>
+              <select name="statut" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky">
+                {% for val, label in statut_choices %}
+                <option value="{{ val }}" {% if contact.statut == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Étape pipeline</label>
+              <select name="pipeline" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky">
+                {% for val, label in pipeline_choices %}
+                <option value="{{ val }}" {% if contact.pipeline == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Valeur devis (FCFA)</label>
+              <input type="number" name="valeur_devis" value="{{ contact.valeur_devis|default:'' }}"
+                     class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky"
+                     placeholder="Ex: 850000">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Notes internes</label>
+              <textarea name="notes" rows="3"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky resize-none"
+                        placeholder="Notes, observations...">{{ contact.notes }}</textarea>
+            </div>
+            <button type="submit" class="w-full bg-navy text-white text-sm font-medium py-2.5 rounded-lg border-none cursor-pointer hover:bg-navy-dark transition-colors">
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    {# ── Colonne droite ── #}
+    <div class="flex flex-col gap-5">
+
+      {# Ajouter un échange #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h3 class="font-display font-bold text-navy text-sm mb-4">Ajouter un échange</h3>
+        <form method="POST" class="flex flex-col gap-3">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_echange">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Type</label>
+              <select name="type_echange" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky">
+                {% for val, label in type_echange_choices %}
+                <option value="{{ val }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Titre / Résumé</label>
+              <input type="text" name="titre" required placeholder="Ex: Devis envoyé"
+                     class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky">
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Détails</label>
+            <textarea name="contenu" rows="2" placeholder="Détails de l'échange..."
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky resize-none"></textarea>
+          </div>
+          <button type="submit" class="bg-sky text-white text-sm font-medium px-5 py-2 rounded-lg border-none cursor-pointer hover:bg-sky-dark transition-colors w-fit">
+            Ajouter l'échange
+          </button>
+        </form>
+      </div>
+
+      {# Historique échanges #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h3 class="font-display font-bold text-navy text-sm mb-5">Historique des échanges</h3>
+        {% if echanges %}
+        <div class="relative pl-6">
+          <div class="absolute left-2 top-2 bottom-2 w-0.5 bg-slate-200" aria-hidden="true"></div>
+          {% for echange in echanges %}
+          <div class="flex gap-4 pb-5 relative {% if not forloop.last %}border-b border-slate-100 mb-5{% endif %}">
+            <div class="absolute -left-4 top-0 w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center z-10">
+              <i class="ti {{ echange.icone }} text-slate-500" style="font-size:13px" aria-hidden="true"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-1">
+                <p class="text-sm font-medium text-navy">{{ echange.titre }}</p>
+                <span class="text-xs text-slate-400">{{ echange.date|date:"d/m/Y H:i" }}</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-1">{{ echange.get_type_echange_display }}{% if echange.auteur %} · {{ echange.auteur.get_full_name|default:echange.auteur.username }}{% endif %}</p>
+              {% if echange.contenu %}
+              <div class="bg-slate-50 rounded-lg p-3 border-l-2 border-sky mt-2">
+                <p class="text-xs text-slate-600 leading-relaxed">{{ echange.contenu }}</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-slate-400">Aucun échange enregistré.</p>
+        {% endif %}
+      </div>
+
+      {# Relances #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h3 class="font-display font-bold text-navy text-sm mb-4">Relances</h3>
+
+        {# Ajouter relance #}
+        <form method="POST" class="flex flex-wrap gap-3 mb-5 pb-5 border-b border-slate-100">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_relance">
+          <input type="text" name="titre" required placeholder="Objet de la relance"
+                 class="flex-1 min-w-[180px] bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky">
+          <input type="date" name="date_prevue" required
+                 class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky">
+          <select name="priorite" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky">
+            {% for val, label in priorite_choices %}
+            <option value="{{ val }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="bg-navy text-white text-sm font-medium px-4 py-2 rounded-lg border-none cursor-pointer hover:bg-navy-dark transition-colors">
+            + Ajouter
+          </button>
+        </form>
+
+        {# Liste relances #}
+        {% for relance in relances %}
+        <div class="flex items-center justify-between py-3 {% if not forloop.last %}border-b border-slate-100{% endif %}">
+          <div>
+            <p class="text-sm {% if relance.effectuee %}text-slate-400 line-through{% else %}text-navy font-medium{% endif %}">
+              {{ relance.titre }}
+            </p>
+            <p class="text-xs text-slate-400">{{ relance.date_prevue|date:"d/m/Y" }}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-bold px-2 py-1 rounded-full
+              {% if relance.effectuee %}bg-green-50 text-green-600
+              {% elif relance.est_en_retard %}bg-red-50 text-red-600
+              {% elif relance.priorite == 'urgente' %}bg-amber-50 text-amber-600
+              {% else %}bg-slate-100 text-slate-500{% endif %}">
+              {% if relance.effectuee %}Fait{% elif relance.est_en_retard %}En retard{% else %}{{ relance.get_priorite_display }}{% endif %}
+            </span>
+            {% if not relance.effectuee %}
+            <form method="POST" class="inline">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="marquer_relance">
+              <input type="hidden" name="relance_id" value="{{ relance.pk }}">
+              <button type="submit" class="text-xs text-green-600 border border-green-200 px-2 py-1 rounded-lg bg-transparent cursor-pointer hover:bg-green-50 transition-colors">
+                ✓ Fait
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-sm text-slate-400">Aucune relance programmée.</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
