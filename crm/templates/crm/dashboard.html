@@ -128,10 +128,13 @@
             <p class="text-xs text-slate-400 mb-1">{{ msg.email }} · {{ msg.organisation }}</p>
             <p class="text-xs text-slate-600 line-clamp-2 mb-3">{{ msg.message }}</p>
             <div class="flex gap-2">
-              <a href="{% url 'crm:importer_message' msg.pk %}"
-                 class="text-xs bg-navy text-white px-3 py-1.5 rounded-lg no-underline hover:bg-navy-dark transition-colors">
-                Importer en CRM
-              </a>
+              <form method="POST" action="{% url 'crm:importer_message' msg.pk %}" class="inline">
+                {% csrf_token %}
+                <button type="submit"
+                        class="text-xs bg-navy text-white px-3 py-1.5 rounded-lg border-none cursor-pointer hover:bg-navy-dark transition-colors">
+                  Importer en CRM
+                </button>
+              </form>
               <a href="mailto:{{ msg.email }}"
                  class="text-xs border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg no-underline hover:border-sky hover:text-sky transition-colors">
                 Répondre
