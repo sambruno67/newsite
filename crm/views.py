@@ -8,6 +8,11 @@ from django.views.decorators.http import require_POST
 from .models import Contact, Echange, Relance, Tag
 from contact.models import ContactMessage
 
+import csv
+import io
+from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
+
 
 def is_staff(user):
     return user.is_staff or user.is_superuser
@@ -282,3 +287,129 @@ def liste_relances(request):
         "aujourd_hui":      aujourd_hui,
     }
     return render(request, "crm/relances.html", context)
+
+
+
+
+
+# ══════════════════════════════════════════════════════════════════════
+# Export CSV
+# ══════════════════════════════════════════════════════════════════════
+
+@login_required
+@user_passes_test(is_staff)
+def export_contacts_csv(request):
+    """Exporte tous les contacts en CSV téléchargeable."""
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = 'attachment; filename="contacts_innov_geomatics.csv"'
+    response.write("\ufeff")  # BOM pour Excel
+
+    writer = csv.writer(response, delimiter=";")
+    writer.writerow([
+        "Prénom", "Nom", "Email", "Téléphone",
+        "Organisation", "Poste", "Lieu",
+        "Statut", "Pipeline", "Source",
+        "Tags", "Valeur devis (FCFA)", "Notes",
+        "Créé le",
+    ])
+
+    for c in Contact.objects.prefetch_related("tags").order_by("-created_at"):
+        writer.writerow([
+            c.prenom, c.nom, c.email, c.telephone,
+            c.organisation, c.poste, c.lieu,
+            c.get_statut_display(), c.get_pipeline_display(), c.get_source_display(),
+            ", ".join(t.nom for t in c.tags.all()),
+            c.valeur_devis or "",
+            c.notes,
+            c.created_at.strftime("%d/%m/%Y %H:%M"),
+        ])
+
+    return response
+
+
+# ══════════════════════════════════════════════════════════════════════
+# Import CSV
+# ══════════════════════════════════════════════════════════════════════
+
+@login_required
+@user_passes_test(is_staff)
+@require_http_methods(["GET", "POST"])
+def import_contacts_csv(request):
+    """Importe des contacts depuis un fichier CSV."""
+    if request.method == "GET":
+        return render(request, "crm/import_csv.html")
+
+    fichier = request.FILES.get("fichier")
+    if not fichier:
+        return render(request, "crm/import_csv.html", {"erreur": "Aucun fichier sélectionné."})
+
+    # Détecte l'encodage
+    contenu = fichier.read()
+    try:
+        texte = contenu.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        texte = contenu.decode("latin-1")
+
+    reader = csv.DictReader(io.StringIO(texte), delimiter=";")
+
+    crees   = 0
+    ignores = 0
+    erreurs = []
+
+    # Mapping colonnes flexibles
+    COLONNES = {
+        "prenom":       ["Prénom", "prenom", "first_name", "firstname"],
+        "nom":          ["Nom", "nom", "last_name", "lastname", "name"],
+        "email":        ["Email", "email", "e-mail", "mail"],
+        "telephone":    ["Téléphone", "telephone", "tel", "phone"],
+        "organisation": ["Organisation", "organisation", "org", "company", "société"],
+        "poste":        ["Poste", "poste", "fonction", "title", "job"],
+        "lieu":         ["Lieu", "lieu", "pays", "city", "ville", "country"],
+        "notes":        ["Notes", "notes", "remarques", "comments"],
+    }
+
+    def get_val(row, champ):
+        for col in COLONNES.get(champ, []):
+            if col in row:
+                return row[col].strip()
+        return ""
+
+    for i, row in enumerate(reader, start=2):
+        try:
+            nom = get_val(row, "nom")
+            if not nom:
+                ignores += 1
+                continue
+
+            email = get_val(row, "email")
+
+            # Évite les doublons par email
+            if email and Contact.objects.filter(email=email).exists():
+                ignores += 1
+                continue
+
+            Contact.objects.create(
+                prenom=get_val(row, "prenom"),
+                nom=nom,
+                email=email,
+                telephone=get_val(row, "telephone"),
+                organisation=get_val(row, "organisation"),
+                poste=get_val(row, "poste"),
+                lieu=get_val(row, "lieu"),
+                notes=get_val(row, "notes"),
+                source="autre",
+                statut="nouveau",
+                pipeline="nouveau",
+            )
+            crees += 1
+
+        except Exception as e:
+            erreurs.append(f"Ligne {i} : {e}")
+
+    context = {
+        "succes": True,
+        "crees":   crees,
+        "ignores": ignores,
+        "erreurs": erreurs,
+    }
+    return render(request, "crm/import_csv.html", context)

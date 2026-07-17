@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Import CSV — CRM{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+  <div class="bg-navy px-[5%] py-6 pt-24">
+    <nav class="flex items-center gap-2 mb-3 text-xs">
+      <a href="{% url 'crm:dashboard' %}" class="text-sky no-underline hover:underline">CRM</a>
+      <span class="text-white/30">›</span>
+      <a href="{% url 'crm:liste_contacts' %}" class="text-sky no-underline hover:underline">Contacts</a>
+      <span class="text-white/30">›</span>
+      <span class="text-white/60">Import CSV</span>
+    </nav>
+    <h1 class="font-display text-2xl font-bold text-white">Import de contacts</h1>
+  </div>
+
+  <div class="px-[5%] py-8 max-w-2xl">
+
+    {% if succes %}
+    <div class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-6">
+      <h2 class="font-display font-bold text-green-700 text-lg mb-2">Import terminé ✅</h2>
+      <p class="text-sm text-green-600">{{ crees }} contact(s) créé(s)</p>
+      <p class="text-sm text-slate-500">{{ ignores }} ignoré(s) (doublons ou lignes vides)</p>
+      {% if erreurs %}
+      <div class="mt-3">
+        <p class="text-xs font-bold text-red-600 mb-1">Erreurs :</p>
+        {% for err in erreurs %}
+        <p class="text-xs text-red-500">{{ err }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <a href="{% url 'crm:liste_contacts' %}" class="inline-block mt-4 bg-navy text-white text-sm font-medium px-6 py-2.5 rounded-lg no-underline hover:bg-navy-dark transition-colors">
+        Voir les contacts →
+      </a>
+    </div>
+    {% endif %}
+
+    {% if erreur %}
+    <div class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6">
+      <p class="text-sm text-red-600">{{ erreur }}</p>
+    </div>
+    {% endif %}
+
+    <div class="bg-white rounded-2xl border border-slate-200 p-8">
+      <h2 class="font-display font-bold text-navy text-lg mb-2">Importer un fichier CSV</h2>
+      <p class="text-sm text-slate-500 mb-6">Le fichier doit être en format CSV avec le séparateur <code class="bg-slate-100 px-1 rounded">;</code> (point-virgule).</p>
+
+      <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+        {% csrf_token %}
+        <div>
+          <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Fichier CSV *</label>
+          <input type="file" name="fichier" accept=".csv,.txt"
+                 class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-sky">
+        </div>
+        <button type="submit" class="bg-sky text-white text-sm font-medium px-8 py-3 rounded-lg border-none cursor-pointer hover:bg-sky-dark transition-colors w-fit">
+          Importer
+        </button>
+      </form>
+
+      <div class="mt-8 pt-6 border-t border-slate-100">
+        <h3 class="font-display font-bold text-navy text-sm mb-3">Format attendu</h3>
+        <div class="bg-slate-50 rounded-lg p-4 text-xs font-mono text-slate-600 overflow-x-auto">
+          Prénom;Nom;Email;Téléphone;Organisation;Poste;Lieu;Notes<br>
+          Yacouba;Ouédraogo;y.oued@mail.com;+22670000000;ONG Sahel;Directeur;Ouagadougou BF;<br>
+          Ibrahim;Koné;i.kone@org.bf;+22676000000;Ministère;Ingénieur;Bobo-Dioulasso;
+        </div>
+        <p class="text-xs text-slate-400 mt-3">
+          Les colonnes peuvent être dans n'importe quel ordre. Les doublons (même email) sont ignorés automatiquement.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-5 flex gap-3">
+      <a href="{% url 'crm:export_csv' %}"
+         class="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 text-sm font-medium px-5 py-2.5 rounded-lg no-underline hover:border-sky hover:text-sky transition-colors">
+        ↓ Exporter les contacts actuels (CSV)
+      </a>
+      <a href="{% url 'crm:liste_contacts' %}"
+         class="inline-flex items-center gap-2 text-slate-400 text-sm no-underline hover:text-navy transition-colors">
+        ← Retour aux contacts
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

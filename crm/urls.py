@@ -11,4 +11,6 @@ urlpatterns = [
     path("crm/contacts/<int:pk>/",        views.fiche_contact,   name="fiche_contact"),
     path("crm/relances/",                 views.liste_relances,  name="liste_relances"),
     path("crm/importer/<int:message_id>/", views.importer_message, name="importer_message"),
+    path("crm/export/",  views.export_contacts_csv, name="export_csv"),
+    path("crm/import/",  views.import_contacts_csv, name="import_csv"),
 ]
