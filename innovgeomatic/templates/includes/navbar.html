@@ -25,12 +25,20 @@
         {% trans "Contact" %}
       </a>
     </li>
+    
     <!-- Sélecteur de langue -->
     <li class="flex items-center gap-1 text-white/50 text-sm">
       <li class="text-white/50 text-sm">BF</li>
     </li>
   </ul>
-
+  {# Dans la navbar, après les liens principaux #}
+{% if request.user.is_staff %}
+<li>
+  <a href="/dashboard/" class="bg-navy/20 hover:bg-navy text-white text-sm font-medium px-4 py-1.5 rounded-lg no-underline transition-colors">
+    <i class="ti ti-layout-dashboard" style="font-size:13px;vertical-align:-1px"></i> Admin
+  </a>
+</li>
+{% endif %}
   <!-- Burger mobile -->
   <button id="burger" class="md:hidden flex flex-col gap-1.5 p-2 cursor-pointer" aria-label="Menu" aria-expanded="false">
     <span class="w-6 h-0.5 bg-white transition-all duration-300 block"></span>
