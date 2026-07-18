@@ -155,6 +155,22 @@ def _get_services_data():
                 "Recommandations d'outils",
             ],
         },
+        {
+            "id":          "Conception & Développement",
+            "emoji":       "🤝",
+            "bg_class":    "bg-navy/10",
+            "title":       "Concetion & Développement",
+            "description": (
+                "Conceprion et développement d'applications web et mobiles sur mesure pour vos besoins géospatiaux. "
+            ),
+            "tags":        ["Conception", "Développement", "Cahier des charges", "Transfert de compétences"],
+            "livrables": [
+                "compréhension des besoins et analyse fonctionnelle",
+                "Cahier des charges technique",
+                "application web et mobile sur mesure",
+                "maintenance et support technique",
+            ],
+        },
     ]
 
 
