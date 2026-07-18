@@ -171,6 +171,21 @@ def _get_services_data():
                 "maintenance et support technique",
             ],
         },
+        {
+            "id":          "Collecte & Analyse de données",
+            "emoji":       "🤝",
+            "bg_class":    "bg-navy/10",
+            "title":       "Collecte & Analyse de données",
+            "description": (
+                "Collecte et analyse de données géospatiales pour vos projets SIG. "
+            ),
+            "tags":        ["Collecte", "Analyse", "Cahier des charges", "Transfert de compétences"],
+            "livrables": [
+                "Collecte de données terrain et satellitaires",
+                "Analyse de données géospatiales",
+                "Rapport d'analyse",
+            ],
+        },
     ]
 
 
