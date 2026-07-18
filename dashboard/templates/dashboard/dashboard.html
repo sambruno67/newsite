@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord Admin — Innov Geomatics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { DEFAULT: '#1A3A8F', dark: '#0F2460', light: '#2449B0' },
+            sky:  { DEFAULT: '#29ABE2', light: '#E8F6FC', dark: '#1D9ED4' },
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body:    ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .sidebar { width: 220px; min-height: 100vh; }
+    .main-content { margin-left: 220px; }
+    .sb-item { transition: all .15s; }
+    .sb-item.active { background: rgba(41,171,226,0.12); color: #1A3A8F; font-weight: 500; }
+    .sb-item:hover:not(.active) { background: rgba(0,0,0,0.04); }
+  </style>
+</head>
+<body class="bg-slate-50 font-body antialiased">
+
+{# ══════════════════════════════════ TOPBAR ══ #}
+<div class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 flex items-center justify-between px-5 h-14">
+  <div class="flex items-center gap-3">
+    <div class="w-8 h-8 bg-navy rounded-lg flex items-center justify-center flex-shrink-0">
+      <i class="ti ti-map-pin text-white" style="font-size:16px"></i>
+    </div>
+    <span class="font-display font-bold text-navy text-base">Innov <span class="text-sky">Geomatics</span></span>
+    <span class="text-slate-300 text-sm">/</span>
+    <span class="text-slate-500 text-sm">Admin</span>
+  </div>
+  <div class="flex items-center gap-3">
+    {% if nb_messages_non_lus %}
+    <a href="/crm/" class="flex items-center gap-1.5 bg-sky-light text-sky text-xs font-semibold px-3 py-1.5 rounded-full no-underline hover:bg-sky hover:text-white transition-colors">
+      <i class="ti ti-bell" style="font-size:13px"></i>
+      {{ nb_messages_non_lus }} nouveau{% if nb_messages_non_lus > 1 %}x{% endif %}
+    </a>
+    {% endif %}
+    <a href="/" target="_blank" class="text-xs text-slate-500 no-underline hover:text-sky transition-colors">
+      <i class="ti ti-external-link" style="font-size:14px;vertical-align:-2px"></i> Voir le site
+    </a>
+    <a href="/admin/" class="text-xs text-slate-500 no-underline hover:text-sky transition-colors">
+      <i class="ti ti-settings" style="font-size:14px;vertical-align:-2px"></i> Wagtail
+    </a>
+    <div class="w-8 h-8 rounded-full bg-navy flex items-center justify-center text-white text-xs font-bold">
+      {{ user.username|slice:":2"|upper }}
+    </div>
+  </div>
+</div>
+
+{# ══════════════════════════════════ SIDEBAR ══ #}
+<aside class="sidebar fixed top-14 left-0 bottom-0 bg-white border-r border-slate-200 overflow-y-auto flex flex-col py-4">
+
+  <div class="px-3 mb-2">
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">Navigation</p>
+    <a href="{% url 'dashboard:dashboard' %}" class="sb-item active flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm no-underline mb-0.5">
+      <i class="ti ti-layout-dashboard" style="font-size:17px"></i> Tableau de bord
+    </a>
+    <a href="/admin/pages/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <i class="ti ti-file-text" style="font-size:17px"></i> Pages
+    </a>
+    <a href="/admin/images/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <i class="ti ti-photo" style="font-size:17px"></i> Images
+    </a>
+    <a href="/admin/documents/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline">
+      <i class="ti ti-file" style="font-size:17px"></i> Documents
+    </a>
+  </div>
+
+  <div class="px-3 mb-2 mt-3">
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">CRM</p>
+    <a href="/crm/" class="sb-item flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <span class="flex items-center gap-2.5"><i class="ti ti-layout-dashboard" style="font-size:17px"></i> Dashboard CRM</span>
+    </a>
+    <a href="/crm/contacts/" class="sb-item flex items-center justify-between px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <span class="flex items-center gap-2.5"><i class="ti ti-users" style="font-size:17px"></i> Contacts</span>
+      {% if crm_stats.total_contacts %}
+      <span class="text-[10px] font-bold bg-sky-light text-sky px-1.5 py-0.5 rounded-full">{{ crm_stats.total_contacts }}</span>
+      {% endif %}
+    </a>
+    <a href="/crm/pipeline/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <i class="ti ti-columns" style="font-size:17px"></i> Pipeline
+    </a>
+    <a href="/crm/relances/" class="sb-item flex items-center justify-between px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <span class="flex items-center gap-2.5"><i class="ti ti-bell" style="font-size:17px"></i> Relances</span>
+      {% if crm_stats.relances_total %}
+      <span class="text-[10px] font-bold bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-full">{{ crm_stats.relances_total }}</span>
+      {% endif %}
+    </a>
+    <a href="/crm/import/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline">
+      <i class="ti ti-upload" style="font-size:17px"></i> Import CSV
+    </a>
+  </div>
+
+  <div class="px-3 mb-2 mt-3">
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">Contenu</p>
+    <a href="/admin/snippets/formations/formation/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <i class="ti ti-graduation-cap" style="font-size:17px"></i> Formations
+    </a>
+    <a href="/admin/snippets/projets/projet/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <i class="ti ti-map" style="font-size:17px"></i> Projets
+    </a>
+    <a href="/admin/pages/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <i class="ti ti-pencil" style="font-size:17px"></i> Blog
+    </a>
+    <a href="/admin/snippets/apropos/membreequipe/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline">
+      <i class="ti ti-users-group" style="font-size:17px"></i> Équipe
+    </a>
+  </div>
+
+  <div class="px-3 mt-3">
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">Système</p>
+    <a href="/admin/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline mb-0.5">
+      <i class="ti ti-settings" style="font-size:17px"></i> Wagtail Admin
+    </a>
+    <a href="/admin/account/" class="sb-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-600 no-underline">
+      <i class="ti ti-user" style="font-size:17px"></i> Mon compte
+    </a>
+  </div>
+</aside>
+
+{# ══════════════════════════════════ MAIN ════ #}
+<div class="main-content pt-14 min-h-screen">
+  <div class="px-8 py-7">
+
+    {# Header #}
+    <div class="flex items-center justify-between mb-7">
+      <div>
+        <h1 class="font-display text-2xl font-bold text-navy">Tableau de bord</h1>
+        <p class="text-sm text-slate-400 mt-0.5">
+          Bonjour {{ user.first_name|default:user.username }} —
+          {{ aujourd_hui|date:"l d F Y" }}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <a href="/crm/contacts/nouveau/" class="inline-flex items-center gap-1.5 bg-navy hover:bg-navy-dark text-white text-sm font-medium px-4 py-2 rounded-lg no-underline transition-colors">
+          <i class="ti ti-user-plus" style="font-size:15px"></i> Nouveau contact
+        </a>
+        <a href="/admin/pages/add/" class="inline-flex items-center gap-1.5 bg-sky hover:bg-sky-dark text-white text-sm font-medium px-4 py-2 rounded-lg no-underline transition-colors">
+          <i class="ti ti-plus" style="font-size:15px"></i> Nouveau contenu
+        </a>
+      </div>
+    </div>
+
+    {# Stats principales #}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-2xl p-5 border border-slate-200">
+        <p class="text-xs text-slate-400 flex items-center gap-1.5 mb-2">
+          <i class="ti ti-users" style="font-size:14px"></i> Contacts CRM
+        </p>
+        <p class="font-display text-3xl font-bold text-navy">{{ crm_stats.total_contacts|default:0 }}</p>
+        <p class="text-xs text-green-500 mt-1">+{{ crm_stats.nouveaux_ce_mois|default:0 }} ce mois</p>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-200">
+        <p class="text-xs text-slate-400 flex items-center gap-1.5 mb-2">
+          <i class="ti ti-mail" style="font-size:14px"></i> Messages non lus
+        </p>
+        <p class="font-display text-3xl font-bold {% if nb_messages_non_lus %}text-sky{% else %}text-navy{% endif %}">
+          {{ nb_messages_non_lus }}
+        </p>
+        <p class="text-xs text-slate-400 mt-1">via formulaire contact</p>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-200">
+        <p class="text-xs text-slate-400 flex items-center gap-1.5 mb-2">
+          <i class="ti ti-file-text" style="font-size:14px"></i> Pages publiées
+        </p>
+        <p class="font-display text-3xl font-bold text-navy">{{ pages_info|length }}</p>
+        <p class="text-xs text-slate-400 mt-1">sur le site</p>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-200">
+        <p class="text-xs text-slate-400 flex items-center gap-1.5 mb-2">
+          <i class="ti ti-bell" style="font-size:14px"></i> Relances à faire
+        </p>
+        <p class="font-display text-3xl font-bold {% if crm_stats.relances_retard %}text-red-500{% elif crm_stats.relances_total %}text-amber-500{% else %}text-navy{% endif %}">
+          {{ crm_stats.relances_total|default:0 }}
+        </p>
+        {% if crm_stats.relances_retard %}
+        <p class="text-xs text-red-400 mt-1">{{ crm_stats.relances_retard }} en retard</p>
+        {% else %}
+        <p class="text-xs text-slate-400 mt-1">relances programmées</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Actions rapides #}
+    <div class="grid grid-cols-3 md:grid-cols-6 gap-3 mb-6">
+      {% for action in quick_actions %}{% endfor %}
+      <a href="/crm/contacts/nouveau/" class="flex flex-col items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-3 no-underline text-slate-600 hover:border-sky hover:text-sky transition-colors text-center">
+        <i class="ti ti-user-plus" style="font-size:20px;color:#1A3A8F"></i>
+        <span class="text-[11px] font-medium">Nouveau contact</span>
+      </a>
+      <a href="/admin/snippets/blog/blogpost/add/" class="flex flex-col items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-3 no-underline text-slate-600 hover:border-sky hover:text-sky transition-colors text-center">
+        <i class="ti ti-file-plus" style="font-size:20px;color:#1A3A8F"></i>
+        <span class="text-[11px] font-medium">Nouvel article</span>
+      </a>
+      <a href="/admin/snippets/formations/formation/add/" class="flex flex-col items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-3 no-underline text-slate-600 hover:border-sky hover:text-sky transition-colors text-center">
+        <i class="ti ti-graduation-cap" style="font-size:20px;color:#1A3A8F"></i>
+        <span class="text-[11px] font-medium">Ajouter formation</span>
+      </a>
+      <a href="/admin/snippets/projets/projet/add/" class="flex flex-col items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-3 no-underline text-slate-600 hover:border-sky hover:text-sky transition-colors text-center">
+        <i class="ti ti-map-pin" style="font-size:20px;color:#1A3A8F"></i>
+        <span class="text-[11px] font-medium">Ajouter projet</span>
+      </a>
+      <a href="/crm/import/" class="flex flex-col items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-3 no-underline text-slate-600 hover:border-sky hover:text-sky transition-colors text-center">
+        <i class="ti ti-upload" style="font-size:20px;color:#1A3A8F"></i>
+        <span class="text-[11px] font-medium">Importer CSV</span>
+      </a>
+      <a href="/crm/export/" class="flex flex-col items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-3 no-underline text-slate-600 hover:border-sky hover:text-sky transition-colors text-center">
+        <i class="ti ti-download" style="font-size:20px;color:#1A3A8F"></i>
+        <span class="text-[11px] font-medium">Exporter CSV</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+
+      {# Messages reçus #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-display font-bold text-navy text-sm flex items-center gap-2">
+            <i class="ti ti-mail text-sky" style="font-size:16px"></i>
+            Messages du site
+          </h2>
+          <a href="/crm/" class="text-xs text-sky no-underline hover:underline">Voir tout →</a>
+        </div>
+        {% for msg in messages_recus %}
+        <div class="flex items-center gap-3 py-3 {% if not forloop.last %}border-b border-slate-100{% endif %}">
+          <div class="w-8 h-8 rounded-full bg-navy/10 flex items-center justify-center text-navy text-xs font-bold flex-shrink-0">
+            {{ msg.prenom|slice:":1" }}{{ msg.nom|slice:":1" }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-navy truncate">{{ msg.prenom }} {{ msg.nom }}</p>
+            <p class="text-xs text-slate-400 truncate">{{ msg.message|truncatewords:8 }}</p>
+          </div>
+          <div class="text-right flex-shrink-0">
+            {% if not msg.lu %}
+            <span class="text-[10px] font-bold bg-sky-light text-sky px-2 py-0.5 rounded-full block mb-1">Nouveau</span>
+            {% endif %}
+            <span class="text-[10px] text-slate-400">{{ msg.created_at|date:"d/m" }}</span>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-sm text-slate-400 py-4 text-center">Aucun message reçu.</p>
+        {% endfor %}
+      </div>
+
+      {# Relances #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-display font-bold text-navy text-sm flex items-center gap-2">
+            <i class="ti ti-bell text-amber-500" style="font-size:16px"></i>
+            Relances à faire
+          </h2>
+          <a href="/crm/relances/" class="text-xs text-sky no-underline hover:underline">Voir tout →</a>
+        </div>
+        {% for relance in crm_stats.relances_urgentes %}
+        <div class="flex items-center gap-3 py-3 {% if not forloop.last %}border-b border-slate-100{% endif %}">
+          <div class="flex-1 min-w-0">
+            <a href="/crm/contacts/{{ relance.contact.pk }}/" class="text-sm font-medium text-navy no-underline hover:text-sky transition-colors">
+              {{ relance.contact.nom_complet }}
+            </a>
+            <p class="text-xs text-slate-400">{{ relance.titre }}</p>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full block mb-1
+              {% if relance.est_en_retard %}bg-red-50 text-red-600
+              {% elif relance.priorite == 'urgente' %}bg-amber-50 text-amber-600
+              {% else %}bg-slate-100 text-slate-500{% endif %}">
+              {% if relance.est_en_retard %}En retard{% else %}{{ relance.get_priorite_display }}{% endif %}
+            </span>
+            <span class="text-[10px] text-slate-400">{{ relance.date_prevue|date:"d/m" }}</span>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-sm text-slate-400 py-4 text-center">Aucune relance. ✅</p>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+      {# Pipeline #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-display font-bold text-navy text-sm">Pipeline CRM</h2>
+          <a href="/crm/pipeline/" class="text-xs text-sky no-underline hover:underline">Voir →</a>
+        </div>
+        {% if crm_stats.valeur_pipeline %}
+        <p class="text-xs text-slate-400 mb-4">Valeur : {{ crm_stats.valeur_pipeline|floatformat:0 }} FCFA</p>
+        {% endif %}
+        <div class="flex flex-col gap-3">
+          {% for etape in crm_stats.pipeline %}
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-600">{{ etape.label }}</span>
+              <span class="text-slate-400 font-medium">{{ etape.count }}</span>
+            </div>
+            <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full
+                {% if etape.code == 'gagne' %}bg-green-500
+                {% elif etape.code == 'devis' %}bg-amber-400
+                {% elif etape.code == 'negociation' %}bg-purple-500
+                {% elif etape.code == 'perdu' %}bg-red-400
+                {% else %}bg-sky{% endif %}"
+                style="width: {% if etape.count %}{{ etape.count }}0{% else %}0{% endif %}%; max-width:100%">
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      {# Contenu #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <h2 class="font-display font-bold text-navy text-sm mb-4">Contenu publié</h2>
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-sm text-slate-600">
+              <i class="ti ti-map text-sky" style="font-size:16px"></i> Projets
+            </span>
+            <span class="font-display font-bold text-navy text-xl">{{ contenu.projets }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-sm text-slate-600">
+              <i class="ti ti-graduation-cap text-green-500" style="font-size:16px"></i> Formations
+            </span>
+            <span class="font-display font-bold text-navy text-xl">{{ contenu.formations }} <span class="text-xs text-green-500 font-normal">({{ contenu.formations_dispo }} dispo)</span></span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-sm text-slate-600">
+              <i class="ti ti-pencil text-purple-500" style="font-size:16px"></i> Articles blog
+            </span>
+            <span class="font-display font-bold text-navy text-xl">{{ contenu.articles }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-sm text-slate-600">
+              <i class="ti ti-users text-amber-500" style="font-size:16px"></i> Membres équipe
+            </span>
+            <span class="font-display font-bold text-navy text-xl">{{ contenu.membres }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-sm text-slate-600">
+              <i class="ti ti-building text-slate-400" style="font-size:16px"></i> Partenaires
+            </span>
+            <span class="font-display font-bold text-navy text-xl">{{ contenu.partenaires }}</span>
+          </div>
+        </div>
+      </div>
+
+      {# Santé site + Activité #}
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <h2 class="font-display font-bold text-navy text-sm mb-4">Santé du site</h2>
+        <div class="flex flex-col gap-2.5">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-600">HTTPS / SSL</span>
+            <span class="text-[11px] font-bold bg-green-50 text-green-600 px-2 py-0.5 rounded-full">Actif</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-600">Base de données</span>
+            <span class="text-[11px] font-bold bg-green-50 text-green-600 px-2 py-0.5 rounded-full">PostgreSQL</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-600">Fichiers statiques</span>
+            <span class="text-[11px] font-bold bg-green-50 text-green-600 px-2 py-0.5 rounded-full">OK</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-600">Pages publiées</span>
+            <span class="text-[11px] font-bold bg-green-50 text-green-600 px-2 py-0.5 rounded-full">{{ pages_info|length }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-600">Sécurité Django</span>
+            <span class="text-[11px] font-bold bg-green-50 text-green-600 px-2 py-0.5 rounded-full">0 erreur</span>
+          </div>
+        </div>
+
+        {% if activites %}
+        <div class="mt-5 pt-4 border-t border-slate-100">
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Activité récente</p>
+          {% for act in activites %}
+          <div class="flex gap-2 mb-2">
+            <div class="w-1.5 h-1.5 rounded-full bg-sky mt-1.5 flex-shrink-0"></div>
+            <p class="text-xs text-slate-500 leading-relaxed flex-1">{{ act.texte }}</p>
+            <span class="text-[10px] text-slate-400 flex-shrink-0">{{ act.date|date:"d/m" }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

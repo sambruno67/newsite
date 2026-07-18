@@ -14,6 +14,7 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
     path("", include("crm.urls")),
+    path("", include("dashboard.urls")),
     path("", include("contact.urls")),
     path("", include("projets.urls")),# ← ajouter avant wagtail_serve
 ]

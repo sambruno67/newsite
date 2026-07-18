@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "contact",
     "apropos",
     "crm",
+    "dashboard",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
