@@ -16,7 +16,8 @@ urlpatterns = [
     path("", include("crm.urls")),
     path("", include("dashboard.urls")),
     path("", include("contact.urls")),
-    path("", include("projets.urls")),# ← ajouter avant wagtail_serve
+    path("", include("projets.urls")),
+    path("", include("formations.urls")),
 ]
 
 
