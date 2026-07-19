@@ -126,9 +126,9 @@
             <span class="font-normal text-slate-400 text-xs">/ participant</span>
           </p>
           {% endif %}
-          <a href="/contact/?formation={{ formation.slug }}"
+          <a href="/formations/{{ formation.slug }}/"
              class="flex items-center justify-center gap-2 bg-sky hover:bg-sky-dark text-white font-medium text-sm px-6 py-3 rounded-lg transition-colors no-underline w-full">
-            {% trans "S'inscrire" %} →
+            {% trans "Voir les détails" %} →
           </a>
         </div>
       </div>
@@ -180,9 +180,9 @@
         </ul>
         {% endif %}
 
-        <a href="/contact/?formation={{ formation.slug }}"
-           class="flex items-center justify-center gap-2 border border-slate-200 hover:border-sky hover:text-sky text-slate-400 font-medium text-sm px-6 py-2.5 rounded-lg transition-colors no-underline w-full mt-auto">
-          {% trans "Être notifié" %} →
+        <a href="/formations/{{ formation.slug }}/"
+           class="flex items-center justify-center gap-2 border border-slate-200 ...">
+          {% trans "Voir les détails" %} →
         </a>
       </div>
     </article>

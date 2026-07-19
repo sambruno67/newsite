@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags wagtailimages_tags wagtaildocs_tags i18n %}
+{% load static wagtailcore_tags wagtailimages_tags i18n %}
 
 {% block title %}{{ formation.titre }} — Innov Geomatics{% endblock %}
 {% block meta_description %}{{ formation.description_courte }}{% endblock %}
@@ -253,7 +253,7 @@
             {% endif %}
           </div>
           {% if doc.fichier %}
-          <a href="{% url 'wagtaildocs_serve' doc.fichier.id doc.fichier.filename %}"
+          <a href="{{ doc.fichier.url }}"
              class="flex items-center gap-1.5 bg-navy text-white text-xs font-medium px-4 py-2 rounded-lg no-underline hover:bg-navy-dark transition-colors flex-shrink-0">
             ↓ Télécharger
           </a>
