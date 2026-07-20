@@ -154,8 +154,17 @@ MEDIA_URL = "/media/"
 
 # Default storage settings
 # See https://docs.djangoproject.com/en/6.0/ref/settings/#std-setting-STORAGES
-STORAGES = {
-    "default": {
+R2_VARIABLES = [
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_STORAGE_BUCKET_NAME",
+    "AWS_S3_REGION_NAME",
+    "AWS_S3_ENDPOINT_URL",
+    "AWS_S3_CUSTOM_DOMAIN",
+]
+
+if all(os.environ.get(name) for name in R2_VARIABLES):
+    default_storage = {
         "BACKEND": "storages.backends.s3.S3Storage",
         "OPTIONS": {
             "access_key": os.environ["AWS_ACCESS_KEY_ID"],
@@ -167,7 +176,15 @@ STORAGES = {
             "querystring_auth": False,
             "file_overwrite": False,
         },
-    },
+    }
+else:
+    # Utilisé uniquement pendant la construction de l’image Railway
+    default_storage = {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    }
+
+STORAGES = {
+    "default": default_storage,
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
