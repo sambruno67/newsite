@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from pathlib import Path
+import os
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = PROJECT_DIR.parent
@@ -155,7 +156,17 @@ MEDIA_URL = "/media/"
 # See https://docs.djangoproject.com/en/6.0/ref/settings/#std-setting-STORAGES
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": os.environ["AWS_ACCESS_KEY_ID"],
+            "secret_key": os.environ["AWS_SECRET_ACCESS_KEY"],
+            "bucket_name": os.environ["AWS_STORAGE_BUCKET_NAME"],
+            "region_name": os.environ["AWS_S3_REGION_NAME"],
+            "endpoint_url": os.environ["AWS_S3_ENDPOINT_URL"],
+            "custom_domain": os.environ["AWS_S3_CUSTOM_DOMAIN"],
+            "querystring_auth": False,
+            "file_overwrite": False,
+        },
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
